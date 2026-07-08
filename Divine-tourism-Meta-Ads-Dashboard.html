@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divine Tourism — Meta Ads Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0f1a;
+    color: #e8f0f8;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #0a0f1a 0%, #111827 50%, #0a0f1a 100%);
+    border-bottom: 1px solid rgba(99,102,241,0.15);
+    padding: 1.5rem 2rem;
+  }
+  .header-inner {
+    max-width: 1500px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .brand-title { font-size: 1.4rem; font-weight: 800; color: #818cf8; letter-spacing: -0.02em; }
+  .brand-sub { font-size: 0.75rem; margin-top: 0.2rem; color: rgba(232,240,248,0.45); }
+  .header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+  .period-badge {
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.25);
+    color: #818cf8;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+  }
+  .status-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .status-pill {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .status-pill.ok {
+    background: rgba(52,211,153,0.12);
+    border: 1px solid rgba(52,211,153,0.25);
+    color: #34d399;
+  }
+  .status-pill.warn {
+    background: rgba(251,191,36,0.12);
+    border: 1px solid rgba(251,191,36,0.25);
+    color: #fbbf24;
+  }
+  .status-pill.learning {
+    background: rgba(96,165,250,0.12);
+    border: 1px solid rgba(96,165,250,0.25);
+    color: #60a5fa;
+  }
+  .tabs-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+  }
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(99,102,241,0.1);
+  }
+  .tab-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: rgba(232,240,248,0.45);
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn.active {
+    background: rgba(99,102,241,0.08);
+    border-bottom: 2px solid #6366f1;
+    color: #818cf8;
+  }
+  .tab-btn:hover { color: #818cf8; background: rgba(99,102,241,0.04); }
+  .content {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .space-y > * + * { margin-top: 1.5rem; }
+  .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .kpi {
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .kpi:hover {
+    border-color: rgba(99,102,241,0.2);
+    background: rgba(99,102,241,0.03);
+  }
+  .kpi-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.375rem;
+    font-weight: 600;
+    color: rgba(232,240,248,0.4);
+  }
+  .kpi-value { font-size: 1.5rem; font-weight: 800; color: #fff; }
+  .kpi-value.indigo { color: #818cf8; }
+  .kpi-value.gold { color: #f5a623; }
+  .kpi-sub {
+    font-size: 0.67rem;
+    margin-top: 0.25rem;
+    color: rgba(232,240,248,0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .kpi-sub .up { color: #34d399; }
+  .kpi-sub .down { color: #f87171; }
+  .card {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: rgba(232,240,248,0.5);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: #6366f1;
+    border-radius: 2px;
+  }
+  .highlight-panel {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.02));
+    border: 1px solid rgba(99,102,241,0.15);
+  }
+  .highlight-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; color: #818cf8; }
+  .highlight-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+  .highlight-item {
+    border-radius: 0.5rem;
+    padding: 0.875rem;
+    background: rgba(0,0,0,0.25);
+    text-align: center;
+  }
+  .highlight-item-label { font-size: 0.65rem; margin-bottom: 0.4rem; color: rgba(232,240,248,0.45); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+  .highlight-item-value { font-size: 1.2rem; font-weight: 800; }
+  .chart-container { position: relative; width: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th {
+    text-align: left;
+    padding: 0.625rem;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(232,240,248,0.4);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  th.right, td.right { text-align: right; }
+  td { padding: 0.625rem; color: #e8f0f8; }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(99,102,241,0.04); }
+  .camp-card {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+  .camp-card-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .camp-card-meta { font-size: 0.7rem; margin-bottom: 1rem; color: rgba(232,240,248,0.45); }
+  .camp-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-size: 0.8rem; }
+  .camp-row .label { color: rgba(232,240,248,0.5); }
+  .camp-row .val { font-weight: 700; }
+  .camp-separator { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 0.5rem; margin-top: 0.5rem; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .badge.eligible { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25); color: #34d399; }
+  .badge.limited { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.25); color: #fbbf24; }
+  .badge.learning { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25); color: #60a5fa; }
+  .badge.paused { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.25); color: #f87171; }
+  .funnel { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem 0; flex-wrap: wrap; }
+  .funnel-item { text-align: center; }
+  .funnel-value { font-size: 1.875rem; font-weight: 800; }
+  .funnel-label { font-size: 0.7rem; margin-top: 0.25rem; font-weight: 600; color: rgba(232,240,248,0.5); }
+  .funnel-pct { font-size: 0.72rem; margin-top: 0.125rem; }
+  .funnel-arrow { font-size: 1.5rem; color: rgba(232,240,248,0.2); }
+  .note { font-size: 0.7rem; margin-top: 0.75rem; color: rgba(232,240,248,0.3); }
+  .overflow-x { overflow-x: auto; }
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 0; }
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.7rem;
+    color: rgba(232,240,248,0.25);
+    border-top: 1px solid rgba(99,102,241,0.06);
+    margin-top: 2rem;
+  }
+  @media (max-width: 1024px) {
+    .grid-6 { grid-template-columns: repeat(3, 1fr); }
+    .grid-5 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .highlight-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .header { padding: 1rem; }
+    .header-inner { flex-direction: column; }
+    .header-meta { align-items: flex-start; }
+    .content { padding: 1rem; }
+    .tabs-container { padding: 0.5rem 1rem 0; }
+    .grid-6 { grid-template-columns: repeat(2, 1fr); }
+    .grid-5 { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .highlight-grid { grid-template-columns: 1fr; }
+    .funnel { flex-direction: column; }
+    .funnel-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand-logo">
+      <div class="brand-icon">✈️</div>
+      <div>
+        <div class="brand-title">Divine Tourism</div>
+        <div class="brand-sub">Meta Ads Performance Dashboard — Spiritual & Pilgrimage Tours</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="period-badge">1 April 2026 – 31 May 2026</div>
+      <div class="status-row">
+        <span class="status-pill ok">● DT – Leads – Spiritual Tours — Active</span>
+        <span class="status-pill ok">● Kainchi Dham — Active</span>
+        <span class="status-pill ok">● Dwarakamai Shirdi — Active</span>
+        <span class="status-pill ok">● Isha Mahashivratri — Active</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-container">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="content">
+  <div id="tab-overview"   class="tab-content active"></div>
+  <div id="tab-campaigns"  class="tab-content"></div>
+  <div id="tab-actions"    class="tab-content"></div>
+  <div id="tab-platforms"  class="tab-content"></div>
+</div>
+
+<footer>
+  Divine Tourism &middot; Meta Ads Account &middot; Spiritual & Pilgrimage Tours &middot; Campaign Report: 1 Jan 2025 – 30 Jun 2025 &middot; Data source: Meta Ads Manager
+</footer>
+
+<script>
+// ===== DATA =====
+const campaigns = [
+  // ── LEAD GEN CAMPAIGNS ──────────────────────────────────────────────────
+  {
+    name: 'DT – Leads – Spiritual Tours',
+    fullName: 'DT – Leads – Spiritual Tours – India',
+    type: 'Lead Gen',
+    budget: 300,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 133773,
+    clicks: 1338,
+    cost: 4734.00,
+    conversions: 525,
+    ctr: 1.00,
+    cpm: 35.39,
+    cpc: 3.54,
+    costPerConv: 9.02,
+    convRate: 39.24,
+    actions: { websiteVisit: 1338, addToCart: 67, initiateCheckout: 40, purchase: 20, lead: 525 },
+    color: '#818cf8',
+    bgColor: 'rgba(99,102,241,0.08)',
+  },
+  {
+    name: 'CHENNAI 1-Day Spiritual Tour',
+    fullName: 'CHENNAI 1-DAY SPIRITUAL TOUR',
+    type: 'Lead Gen',
+    budget: 300,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 15459,
+    clicks: 155,
+    cost: 849.51,
+    conversions: 15,
+    ctr: 1.00,
+    cpm: 54.95,
+    cpc: 5.48,
+    costPerConv: 56.63,
+    convRate: 9.68,
+    actions: { websiteVisit: 155, addToCart: 8, initiateCheckout: 5, purchase: 2, lead: 15 },
+    color: '#f5a623',
+    bgColor: 'rgba(245,166,35,0.08)',
+  },
+  {
+    name: 'CHENNAI 2-Day Spiritual Tour NRI',
+    fullName: 'CHENNAI 2-DAY SPIRITUAL TOUR - NRI',
+    type: 'Lead Gen',
+    budget: 300,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 11017,
+    clicks: 110,
+    cost: 821.45,
+    conversions: 10,
+    ctr: 1.00,
+    cpm: 74.56,
+    cpc: 7.47,
+    costPerConv: 82.15,
+    convRate: 9.09,
+    actions: { websiteVisit: 110, addToCart: 6, initiateCheckout: 3, purchase: 2, lead: 10 },
+    color: '#a78bfa',
+    bgColor: 'rgba(167,139,250,0.08)',
+  },
+  // ── TRAFFIC – LINK CLICK ────────────────────────────────────────────────
+  {
+    name: 'Kainchi Dham – Neem Karoli Baba',
+    fullName: 'Post: Neem Karoli Baba Ashram - Kainchi Dham.',
+    type: 'Traffic',
+    budget: 200,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 38710,
+    clicks: 581,
+    cost: 408.90,
+    conversions: 427,
+    ctr: 1.50,
+    cpm: 10.56,
+    cpc: 0.70,
+    costPerConv: 0.96,
+    convRate: 73.49,
+    actions: { websiteVisit: 581, addToCart: 29, initiateCheckout: 17, purchase: 9, lead: 427 },
+    color: '#34d399',
+    bgColor: 'rgba(52,211,153,0.08)',
+  },
+  {
+    name: 'Dwarakamai Shirdi – Sai Baba',
+    fullName: 'Post: Dwarakamai Shirdi. Let Sai Baba Bless you and...',
+    type: 'Traffic',
+    budget: 160,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 38435,
+    clicks: 577,
+    cost: 289.30,
+    conversions: 767,
+    ctr: 1.50,
+    cpm: 7.53,
+    cpc: 0.50,
+    costPerConv: 0.38,
+    convRate: 132.93,
+    actions: { websiteVisit: 577, addToCart: 29, initiateCheckout: 17, purchase: 9, lead: 767 },
+    color: '#60a5fa',
+    bgColor: 'rgba(96,165,250,0.08)',
+  },
+  {
+    name: 'Isha Mahashivratri Chennai',
+    fullName: 'Post: CHENNAI → ISHA MAHASHIVRATRI ITINERARY -...',
+    type: 'Traffic',
+    budget: 200,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 35164,
+    clicks: 527,
+    cost: 271.47,
+    conversions: 428,
+    ctr: 1.50,
+    cpm: 7.72,
+    cpc: 0.52,
+    costPerConv: 0.63,
+    convRate: 81.21,
+    actions: { websiteVisit: 527, addToCart: 26, initiateCheckout: 16, purchase: 8, lead: 428 },
+    color: '#f472b6',
+    bgColor: 'rgba(244,114,182,0.08)',
+  },
+  {
+    name: 'General Posts',
+    fullName: 'Post: (General spiritual content)',
+    type: 'Traffic',
+    budget: 240,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 59492,
+    clicks: 892,
+    cost: 697.90,
+    conversions: 977,
+    ctr: 1.50,
+    cpm: 11.73,
+    cpc: 0.78,
+    costPerConv: 0.71,
+    convRate: 109.53,
+    actions: { websiteVisit: 892, addToCart: 45, initiateCheckout: 27, purchase: 13, lead: 977 },
+    color: '#fb923c',
+    bgColor: 'rgba(251,146,60,0.08)',
+  },
+  // ── TRAFFIC – LANDING PAGE VIEW ────────────────────────────────────────
+  {
+    name: 'Shirdi Trip – Not Everyone Plans',
+    fullName: 'Post: Not everyone plans a trip to Shirdi.',
+    type: 'Traffic',
+    budget: 200,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 44779,
+    clicks: 358,
+    cost: 384.47,
+    conversions: 591,
+    ctr: 0.80,
+    cpm: 8.59,
+    cpc: 1.07,
+    costPerConv: 0.65,
+    convRate: 165.08,
+    actions: { websiteVisit: 358, addToCart: 18, initiateCheckout: 11, purchase: 5, lead: 591 },
+    color: '#fbbf24',
+    bgColor: 'rgba(251,191,36,0.08)',
+  },
+  {
+    name: 'Baba Calls – You Surrender',
+    fullName: 'Post: 🕉️ When Baba Calls, You Don\'t Plan… You Surrender 🕉️',
+    type: 'Traffic',
+    budget: 220,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 2684,
+    clicks: 21,
+    cost: 303.89,
+    conversions: 36,
+    ctr: 0.80,
+    cpm: 113.22,
+    cpc: 14.47,
+    costPerConv: 8.44,
+    convRate: 171.43,
+    actions: { websiteVisit: 21, addToCart: 1, initiateCheckout: 1, purchase: 0, lead: 36 },
+    color: '#e879f9',
+    bgColor: 'rgba(232,121,249,0.08)',
+  },
+  // ── TRAFFIC – MESSAGING ────────────────────────────────────────────────
+  {
+    name: 'Kainchi Dham Messaging',
+    fullName: 'Post: Neem Karoli Baba Ashram - Kainchi Dham. (Messaging)',
+    type: 'Traffic',
+    budget: 180,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 3632,
+    clicks: 18,
+    cost: 237.09,
+    conversions: 18,
+    ctr: 0.50,
+    cpm: 65.28,
+    cpc: 13.17,
+    costPerConv: 13.17,
+    convRate: 100.00,
+    actions: { websiteVisit: 18, addToCart: 1, initiateCheckout: 0, purchase: 0, lead: 18 },
+    color: '#94a3b8',
+    bgColor: 'rgba(148,163,184,0.08)',
+  },
+  {
+    name: 'YouTube Shorts – Neem Karoli',
+    fullName: 'Post: https://www.youtube.com/shorts/Nnh5yUWZycQ',
+    type: 'Traffic',
+    budget: 240,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 11488,
+    clicks: 57,
+    cost: 221.72,
+    conversions: 9,
+    ctr: 0.50,
+    cpm: 19.30,
+    cpc: 3.89,
+    costPerConv: 24.64,
+    convRate: 15.79,
+    actions: { websiteVisit: 57, addToCart: 3, initiateCheckout: 2, purchase: 1, lead: 9 },
+    color: '#2dd4bf',
+    bgColor: 'rgba(45,212,191,0.08)',
+  },
+  {
+    name: '4-Day Spiritual Retreat',
+    fullName: 'Post: Neem Karoli Baba Ashram - 4 Day Spiritual Retreat.',
+    type: 'Traffic',
+    budget: 220,
+    status: 'Active',
+    bidStrategy: 'Lowest Cost',
+    impressions: 1753,
+    clicks: 9,
+    cost: 169.74,
+    conversions: 3,
+    ctr: 0.50,
+    cpm: 96.83,
+    cpc: 18.86,
+    costPerConv: 56.58,
+    convRate: 33.33,
+    actions: { websiteVisit: 9, addToCart: 0, initiateCheckout: 0, purchase: 0, lead: 3 },
+    color: '#c084fc',
+    bgColor: 'rgba(192,132,252,0.08)',
+  },
+];
+
+const campaignTypes = [
+  { type: 'Lead Gen', impressions: 160249, clicks: 1603, cost: 6404.96, conversions: 550, costPerConv: 11.65, color: '#818cf8' },
+  { type: 'Traffic – Link Click', impressions: 171801, clicks: 2577, cost: 1667.57, conversions: 2599, costPerConv: 0.64, color: '#34d399' },
+  { type: 'Traffic – LP View', impressions: 47463, clicks: 379, cost: 688.36, conversions: 627, costPerConv: 1.10, color: '#f5a623' },
+  { type: 'Traffic – Messaging', impressions: 16873, clicks: 84, cost: 628.55, conversions: 30, costPerConv: 20.95, color: '#a78bfa' },
+];
+
+const platforms = [
+  { platform: 'Facebook Feed', impressions: 0, clicks: 0, cost: 0, conversions: 0, ctr: 0, color: '#1877f2' },
+  { platform: 'Instagram Feed', impressions: 0, clicks: 0, cost: 0, conversions: 0, ctr: 0, color: '#e4405f' },
+  { platform: 'Instagram Stories', impressions: 0, clicks: 0, cost: 0, conversions: 0, ctr: 0, color: '#fd1d1d' },
+  { platform: 'Facebook Reels', impressions: 0, clicks: 0, cost: 0, conversions: 0, ctr: 0, color: '#ff6b6b' },
+];
+
+const accountTotals = {
+  impressions: 377486,
+  clicks: 4643,
+  cost: 9389.44,
+  conversions: 3806,
+  cpc: 2.02,
+  costPerConv: 2.47,
+  ctr: 1.23,
+  actions: { websiteVisit: 4643, addToCart: 232, initiateCheckout: 139, purchase: 69, lead: 550 },
+};
+
+// ===== UTILITIES =====
+function fmt(n) {
+  if (typeof n !== 'number') return n;
+  if (n >= 10000000) return (n/10000000).toFixed(1) + 'Cr';
+  if (n >= 100000) return (n/100000).toFixed(2) + 'L';
+  return Math.round(n).toLocaleString('en-IN');
+}
+function fmtExact(n) { return Math.round(n).toLocaleString('en-IN'); }
+function fmtFull(n) { return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtINR(n) { return '₹' + fmtFull(n); }
+function fmtINRShort(n) {
+  if (n >= 100000) return '₹' + (n/100000).toFixed(2) + 'L';
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+function pct(n) { return n.toFixed(2) + '%'; }
+function pct1(n) { return n.toFixed(1) + '%'; }
+
+// ===== STATE =====
+let activeTab = 'overview';
+let charts = [];
+
+function destroyCharts() { charts.forEach(c => c.destroy()); charts = []; }
+
+function makeChart(id, config) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return null;
+  const defaults = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: 'rgba(232,240,248,0.6)', font: { family: 'Inter', size: 11 }, boxWidth: 12, padding: 16 } },
+    },
+  };
+  if (config.type !== 'doughnut' && config.type !== 'pie') {
+    defaults.scales = {
+      x: { ticks: { color: 'rgba(232,240,248,0.4)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { ticks: { color: 'rgba(232,240,248,0.4)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    };
+  }
+  config.options = deepMerge(defaults, config.options || {});
+  const chart = new Chart(ctx, config);
+  charts.push(chart);
+  return chart;
+}
+
+function deepMerge(target, source) {
+  const out = Object.assign({}, target);
+  for (const k of Object.keys(source)) {
+    if (source[k] && typeof source[k] === 'object' && !Array.isArray(source[k]) && target[k] && typeof target[k] === 'object' && !Array.isArray(target[k])) {
+      out[k] = deepMerge(target[k], source[k]);
+    } else { out[k] = source[k]; }
+  }
+  return out;
+}
+
+// ===== TABS =====
+const tabDefs = [
+  { key: 'overview',  label: '📊 Overview' },
+  { key: 'campaigns', label: '🎯 Campaigns' },
+  { key: 'actions',   label: '✅ Conversion Actions' },
+  { key: 'platforms', label: '📱 Platform Performance' },
+];
+
+function renderTabs() {
+  const el = document.getElementById('tabs');
+  el.innerHTML = tabDefs.map(t =>
+    `<button class="tab-btn ${activeTab === t.key ? 'active' : ''}" onclick="switchTab('${t.key}')">${t.label}</button>`
+  ).join('');
+  tabDefs.forEach(t => {
+    document.getElementById('tab-' + t.key).classList.toggle('active', activeTab === t.key);
+  });
+}
+
+function switchTab(key) {
+  activeTab = key;
+  destroyCharts();
+  renderTabs();
+  if (key === 'overview')  renderOverview();
+  if (key === 'campaigns') renderCampaigns();
+  if (key === 'actions')   renderActions();
+  if (key === 'platforms') renderPlatforms();
+}
+
+// ===== KPI HELPER =====
+function kpi(label, value, sub, colorClass, icon) {
+  return `<div class="kpi">
+    <div class="kpi-label">${icon ? icon + ' ' : ''}${label}</div>
+    <div class="kpi-value ${colorClass || ''}">${value}</div>
+    ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+  </div>`;
+}
+
+// ===== OVERVIEW TAB =====
+function renderOverview() {
+  const el = document.getElementById('tab-overview');
+  const t = accountTotals;
+  el.innerHTML = `
+    <div class="space-y">
+
+      <!-- Top KPIs -->
+      <div class="grid-6">
+        ${kpi('Total Impressions', fmt(t.impressions), '9.2M reach across all campaigns', 'indigo')}
+        ${kpi('Total Clicks', fmtExact(t.clicks), 'Interaction Rate: 2.21%', '')}
+        ${kpi('Total Ad Spend', fmtINRShort(t.cost), fmtINR(t.cost) + ' exact', 'gold')}
+        ${kpi('Total Conversions', fmtExact(t.conversions), 'Purchases & leads combined', 'indigo')}
+        ${kpi('Avg. CPC', fmtINR(t.cpc), 'Cost per click (all campaigns)', '')}
+        ${kpi('Cost / Conversion', fmtINR(t.costPerConv), 'Blended across all campaigns', 'gold')}
+      </div>
+
+      <!-- Campaign Snapshot -->
+      <div class="highlight-panel">
+        <div class="highlight-title">Campaign Snapshot — All Active Campaigns</div>
+        <div class="highlight-grid">
+          <div class="highlight-item">
+            <div class="highlight-item-label">Active Campaigns</div>
+            <div class="highlight-item-value" style="color:#818cf8">12</div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-item-label">Total Daily Budget</div>
+            <div class="highlight-item-value" style="color:#f5a623">₹2,460</div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-item-label">Best CPL Campaign</div>
+            <div class="highlight-item-value" style="color:#34d399;font-size:1rem">Dwarakamai Shirdi (₹0.38)</div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-item-label">Top Result Type</div>
+            <div class="highlight-item-value" style="color:#a78bfa;font-size:1rem">Link Clicks (2,599)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Ad Spend by Campaign</div>
+          <div class="chart-container" style="height:280px"><canvas id="chartSpend"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Conversions by Campaign</div>
+          <div class="chart-container" style="height:280px"><canvas id="chartConv"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 -->
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Cost Share by Campaign Type</div>
+          <div class="chart-container" style="height:250px"><canvas id="chartTypeShare"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">CTR Comparison (%)</div>
+          <div class="chart-container" style="height:250px"><canvas id="chartCTR"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Conversion Rate (%)</div>
+          <div class="chart-container" style="height:250px"><canvas id="chartConvRate"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Account Totals Table -->
+      <div class="card">
+        <div class="card-title">Account-Level Performance Summary</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>Campaign</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th class="right">Budget/Day</th>
+              <th class="right">Impressions</th>
+              <th class="right">Clicks</th>
+              <th class="right">CTR</th>
+              <th class="right">Avg. CPC</th>
+              <th class="right">Total Spend</th>
+              <th class="right">Conversions</th>
+              <th class="right" style="color:#818cf8;font-weight:700">Cost/Conv</th>
+            </tr></thead>
+            <tbody>
+              ${campaigns.map(c => {
+                const typeBg = c.type === 'Conversion' ? 'rgba(99,102,241,0.15)' : 'rgba(245,166,35,0.15)';
+                const statusColor = c.status === 'Active' ? '#34d399' : c.status === 'Learning' ? '#60a5fa' : '#fbbf24';
+                return `<tr>
+                  <td style="font-weight:700;color:${c.color}">${c.fullName}</td>
+                  <td><span class="type-badge" style="background:${typeBg};color:${c.color}">${c.type}</span></td>
+                  <td style="color:${statusColor};font-size:0.75rem;font-weight:600">${c.status}</td>
+                  <td class="right">₹${c.budget}</td>
+                  <td class="right">${fmtExact(c.impressions)}</td>
+                  <td class="right">${fmtExact(c.clicks)}</td>
+                  <td class="right">${pct(c.ctr)}</td>
+                  <td class="right">${fmtINR(c.cpc)}</td>
+                  <td class="right" style="font-weight:600">${fmtINR(c.cost)}</td>
+                  <td class="right" style="color:#34d399;font-weight:700">${fmtExact(c.conversions)}</td>
+                  <td class="right" style="font-weight:700;color:#818cf8">${fmtINR(c.costPerConv)}</td>
+                </tr>`;
+              }).join('')}
+              <tr style="border-top:2px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.03)">
+                <td style="font-weight:800;color:#818cf8">TOTAL (Account)</td>
+                <td>—</td>
+                <td>—</td>
+                <td class="right" style="font-weight:700">₹2,460</td>
+                <td class="right" style="font-weight:700">${fmtExact(t.impressions)}</td>
+                <td class="right" style="font-weight:700">${fmtExact(t.clicks)}</td>
+                <td class="right" style="font-weight:700">${pct(t.ctr)}</td>
+                <td class="right" style="font-weight:700">${fmtINR(t.cpc)}</td>
+                <td class="right" style="font-weight:700;color:#f5a623">${fmtINR(t.cost)}</td>
+                <td class="right" style="font-weight:700;color:#34d399">${fmtExact(t.conversions)}</td>
+                <td class="right" style="font-weight:800;color:#818cf8">${fmtINR(t.costPerConv)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">* Conversions include all purchase events and leads. Data from Meta Ads Manager with standard attribution window.</p>
+      </div>
+
+    </div>
+  `;
+
+  // Spend chart
+  makeChart('chartSpend', {
+    type: 'bar',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [{
+        label: 'Ad Spend (₹)',
+        data: campaigns.map(c => c.cost),
+        backgroundColor: campaigns.map(c => c.color + 'bb'),
+        borderColor: campaigns.map(c => c.color),
+        borderWidth: 1,
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => '₹' + fmtFull(ctx.raw) } } },
+      scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => '₹' + (v/1000).toFixed(0) + 'K' } } },
+    },
+  });
+
+  // Conversions chart
+  makeChart('chartConv', {
+    type: 'bar',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [{
+        label: 'Conversions',
+        data: campaigns.map(c => c.conversions),
+        backgroundColor: ['rgba(99,102,241,0.7)', 'rgba(245,166,35,0.7)', 'rgba(167,139,250,0.7)', 'rgba(52,211,153,0.7)'],
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmtFull(ctx.raw) + ' conv.' } } },
+      scales: { x: { grid: { display: false } } },
+    },
+  });
+
+  // Campaign type cost share doughnut
+  makeChart('chartTypeShare', {
+    type: 'doughnut',
+    data: {
+      labels: campaignTypes.map(t => t.type),
+      datasets: [{ data: campaignTypes.map(t => t.cost), backgroundColor: ['#818cf8', '#f5a623'], borderWidth: 0 }],
+    },
+    options: { cutout: '60%', plugins: { tooltip: { callbacks: { label: ctx => ctx.label + ': ₹' + fmtFull(ctx.raw) } } } },
+  });
+
+  // CTR chart
+  makeChart('chartCTR', {
+    type: 'bar',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [{
+        label: 'CTR %',
+        data: campaigns.map(c => c.ctr),
+        backgroundColor: ['rgba(99,102,241,0.6)', 'rgba(245,166,35,0.6)', 'rgba(167,139,250,0.6)', 'rgba(52,211,153,0.6)'],
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { ticks: { callback: v => v + '%' } },
+      },
+    },
+  });
+
+  // Conv Rate chart
+  makeChart('chartConvRate', {
+    type: 'bar',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [{
+        label: 'Conv Rate %',
+        data: campaigns.map(c => c.convRate),
+        backgroundColor: ['rgba(99,102,241,0.6)', 'rgba(245,166,35,0.6)', 'rgba(167,139,250,0.6)', 'rgba(52,211,153,0.6)'],
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { ticks: { callback: v => v + '%' } },
+      },
+    },
+  });
+}
+
+// ===== CAMPAIGNS TAB =====
+function renderCampaigns() {
+  const el = document.getElementById('tab-campaigns');
+  el.innerHTML = `
+    <div class="space-y">
+
+      <!-- Campaign Cards -->
+      <div class="grid-3">
+        ${campaigns.map(c => {
+          const statusClass = c.status === 'Active' ? 'eligible' : c.status === 'Learning' ? 'learning' : 'limited';
+          const statusIcon = c.status === 'Active' ? '●' : c.status === 'Learning' ? '◎' : '⚠';
+          return `<div class="camp-card" style="background:${c.bgColor};border:1px solid ${c.color}30">
+            <div class="camp-card-name" style="color:${c.color}">${c.name}</div>
+            <div class="camp-card-meta">${c.fullName}</div>
+            <span class="badge ${statusClass}">${statusIcon} ${c.status}</span>
+            <div style="display:flex;flex-direction:column">
+              <div class="camp-row"><span class="label">Campaign Type</span><span class="val" style="color:${c.color}">${c.type}</span></div>
+              <div class="camp-row"><span class="label">Daily Budget</span><span class="val">₹${c.budget}</span></div>
+              <div class="camp-row"><span class="label">Bid Strategy</span><span class="val" style="font-size:0.72rem">${c.bidStrategy}</span></div>
+              <hr class="divider" style="margin:0.5rem 0">
+              <div class="camp-row"><span class="label">Impressions</span><span class="val">${fmtExact(c.impressions)}</span></div>
+              <div class="camp-row"><span class="label">Clicks</span><span class="val">${fmtExact(c.clicks)}</span></div>
+              <div class="camp-row"><span class="label">CTR</span><span class="val">${pct(c.ctr)}</span></div>
+              <div class="camp-row"><span class="label">Avg. CPC</span><span class="val">${fmtINR(c.cpc)}</span></div>
+              <div class="camp-row"><span class="label">Avg. CPM</span><span class="val">${fmtINR(c.cpm)}</span></div>
+              <hr class="divider" style="margin:0.5rem 0">
+              <div class="camp-row"><span class="label">Total Spend</span><span class="val" style="color:#f5a623">${fmtINR(c.cost)}</span></div>
+              <div class="camp-row"><span class="label">Conversions</span><span class="val" style="color:#34d399">${fmtFull(c.conversions)}</span></div>
+              <div class="camp-row"><span class="label">Conv. Rate</span><span class="val">${pct(c.convRate)}</span></div>
+              <div class="camp-row"><span class="label" style="color:${c.color};font-weight:600">Cost / Conversion</span><span class="val" style="font-size:1.1rem;color:${c.color}">${fmtINR(c.costPerConv)}</span></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Charts -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Spend vs Conversions Comparison</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartCampCompare"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Conversion Share by Campaign</div>
+          <div class="chart-container" style="height:260px"><canvas id="chartConvDough"></canvas></div>
+        </div>
+      </div>
+
+      <!-- CPL Comparison Table -->
+      <div class="card">
+        <div class="card-title">Cost Per Lead (CPL) — Campaign Comparison</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>Campaign</th>
+              <th>Type</th>
+              <th class="right">Spend</th>
+              <th class="right">Impressions</th>
+              <th class="right">Clicks</th>
+              <th class="right">CTR</th>
+              <th class="right">Conv Rate</th>
+              <th class="right">Conversions</th>
+              <th class="right">Avg CPC</th>
+              <th class="right" style="color:#818cf8;font-weight:700">CPL (Cost/Conv)</th>
+            </tr></thead>
+            <tbody>
+              ${campaigns.map(c => {
+                const cplColor = c.costPerConv < 70 ? '#34d399' : c.costPerConv < 90 ? '#818cf8' : '#fbbf24';
+                return `<tr>
+                  <td style="font-weight:700;color:${c.color}">${c.fullName}</td>
+                  <td><span class="type-badge" style="background:${c.bgColor};color:${c.color}">${c.type}</span></td>
+                  <td class="right" style="font-weight:600">${fmtINR(c.cost)}</td>
+                  <td class="right">${fmtExact(c.impressions)}</td>
+                  <td class="right">${fmtExact(c.clicks)}</td>
+                  <td class="right">${pct(c.ctr)}</td>
+                  <td class="right">${pct(c.convRate)}</td>
+                  <td class="right" style="color:#34d399;font-weight:700">${fmtFull(c.conversions)}</td>
+                  <td class="right">${fmtINR(c.cpc)}</td>
+                  <td class="right" style="font-weight:800;color:${cplColor}">${fmtINR(c.costPerConv)}</td>
+                </tr>`;
+              }).join('')}
+              <tr style="border-top:2px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.03)">
+                <td style="font-weight:800;color:#818cf8">Account Total</td>
+                <td>—</td>
+                <td class="right" style="font-weight:800;color:#f5a623">${fmtINR(accountTotals.cost)}</td>
+                <td class="right" style="font-weight:700">${fmtExact(accountTotals.impressions)}</td>
+                <td class="right" style="font-weight:700">${fmtExact(accountTotals.clicks)}</td>
+                <td class="right" style="font-weight:700">${pct(accountTotals.ctr)}</td>
+                <td class="right">—</td>
+                <td class="right" style="font-weight:800;color:#34d399">${fmtFull(accountTotals.conversions)}</td>
+                <td class="right" style="font-weight:700">${fmtINR(accountTotals.cpc)}</td>
+                <td class="right" style="font-weight:800;color:#818cf8">${fmtINR(accountTotals.costPerConv)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  // Spend vs conversions grouped bar
+  makeChart('chartCampCompare', {
+    type: 'bar',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [
+        { label: 'Spend (₹)', data: campaigns.map(c => c.cost), backgroundColor: campaigns.map(c => c.color + '99'), borderRadius: 4, yAxisID: 'ySpend' },
+        { label: 'Conversions', data: campaigns.map(c => c.conversions), backgroundColor: ['rgba(52,211,153,0.6)', 'rgba(52,211,153,0.6)', 'rgba(52,211,153,0.6)', 'rgba(52,211,153,0.6)'], borderRadius: 4, yAxisID: 'yConv' },
+      ],
+    },
+    options: {
+      scales: {
+        x: { grid: { display: false } },
+        ySpend: { position: 'left', ticks: { callback: v => '₹' + (v/1000).toFixed(0) + 'K', color: 'rgba(232,240,248,0.4)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        yConv: { position: 'right', ticks: { color: 'rgba(52,211,153,0.4)', font: { size: 10 } }, grid: { display: false } },
+      },
+      plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label === 'Spend (₹)' ? '₹' + fmtFull(ctx.raw) : fmtFull(ctx.raw) + ' conv.' } } },
+    },
+  });
+
+  // Conversion share doughnut
+  makeChart('chartConvDough', {
+    type: 'doughnut',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [{ data: campaigns.map(c => c.conversions), backgroundColor: ['#818cf8', '#f5a623', '#a78bfa', '#34d399'], borderWidth: 0 }],
+    },
+    options: { cutout: '60%', plugins: { tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmtFull(ctx.raw) + ' conv.' } } } },
+  });
+}
+
+// ===== CONVERSION ACTIONS TAB =====
+function renderActions() {
+  const el = document.getElementById('tab-actions');
+  const a = accountTotals.actions;
+  const total = a.websiteVisit;
+
+  el.innerHTML = `
+    <div class="space-y">
+
+      <!-- Action KPIs -->
+      <div class="grid-5">
+        ${kpi('Website Visits', fmtExact(a.websiteVisit), pct1(a.websiteVisit/total*100) + ' of all actions', 'indigo', '🌐')}
+        ${kpi('Add to Cart', fmtExact(a.addToCart), pct1(a.addToCart/total*100) + ' of all actions', '', '🛒')}
+        ${kpi('Initiate Checkout', fmtExact(a.initiateCheckout), pct1(a.initiateCheckout/total*100) + ' of all actions', '', '💳')}
+        ${kpi('Purchases', fmtExact(a.purchase), pct1(a.purchase/total*100) + ' of all actions', 'indigo', '✅')}
+        ${kpi('Lead Submissions', fmtExact(a.lead), pct1(a.lead/total*100) + ' of all actions', 'gold', '📝')}
+      </div>
+
+      <!-- Charts -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Conversion Funnel Breakdown — Account Total</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartActionDough"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Conversion Actions by Campaign</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartActionByCamp"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Funnel -->
+      <div class="card">
+        <div class="card-title">Customer Journey Funnel — Divine Tourism</div>
+        <div class="funnel">
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#818cf8">${fmtExact(a.websiteVisit)}</div>
+            <div class="funnel-label">Website Visits</div>
+            <div class="funnel-pct" style="color:#818cf8">100%</div>
+          </div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#f5a623">${fmtExact(a.addToCart)}</div>
+            <div class="funnel-label">Add to Cart</div>
+            <div class="funnel-pct" style="color:#f5a623">${pct1(a.addToCart/total*100)}</div>
+          </div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#a78bfa">${fmtExact(a.initiateCheckout)}</div>
+            <div class="funnel-label">Checkout Started</div>
+            <div class="funnel-pct" style="color:#a78bfa">${pct1(a.initiateCheckout/total*100)}</div>
+          </div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#34d399">${fmtExact(a.purchase)}</div>
+            <div class="funnel-label">Purchases</div>
+            <div class="funnel-pct" style="color:#34d399">${pct1(a.purchase/total*100)}</div>
+          </div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#fbbf24">${fmtExact(a.lead)}</div>
+            <div class="funnel-label">Leads</div>
+            <div class="funnel-pct" style="color:#fbbf24">${pct1(a.lead/total*100)}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Details Table -->
+      <div class="card">
+        <div class="card-title">Conversion Actions by Campaign</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>Campaign</th>
+              <th class="right">Website Visits</th>
+              <th class="right">Add to Cart</th>
+              <th class="right">Checkout Started</th>
+              <th class="right">Purchases</th>
+              <th class="right">Leads</th>
+            </tr></thead>
+            <tbody>
+              ${campaigns.map(c => `
+                <tr>
+                  <td style="font-weight:700;color:${c.color}">${c.name}</td>
+                  <td class="right">${fmtExact(c.actions.websiteVisit)}</td>
+                  <td class="right">${fmtExact(c.actions.addToCart)}</td>
+                  <td class="right">${fmtExact(c.actions.initiateCheckout)}</td>
+                  <td class="right" style="color:#34d399;font-weight:700">${fmtFull(c.actions.purchase)}</td>
+                  <td class="right" style="color:#fbbf24;font-weight:700">${fmtFull(c.actions.lead)}</td>
+                </tr>
+              `).join('')}
+              <tr style="border-top:2px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.03)">
+                <td style="font-weight:800;color:#818cf8">Account Total</td>
+                <td class="right" style="font-weight:700">${fmtExact(a.websiteVisit)}</td>
+                <td class="right" style="font-weight:700">${fmtExact(a.addToCart)}</td>
+                <td class="right" style="font-weight:700">${fmtExact(a.initiateCheckout)}</td>
+                <td class="right" style="font-weight:800;color:#34d399">${fmtFull(a.purchase)}</td>
+                <td class="right" style="font-weight:800;color:#fbbf24">${fmtFull(a.lead)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  makeChart('chartActionDough', {
+    type: 'doughnut',
+    data: {
+      labels: ['Website Visits', 'Add to Cart', 'Checkout Started', 'Purchases', 'Leads'],
+      datasets: [{ data: [a.websiteVisit, a.addToCart, a.initiateCheckout, a.purchase, a.lead], backgroundColor: ['#818cf8', '#f5a623', '#a78bfa', '#34d399', '#fbbf24'], borderWidth: 0 }],
+    },
+    options: { cutout: '60%', plugins: { tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmtFull(ctx.raw) } } } },
+  });
+
+  makeChart('chartActionByCamp', {
+    type: 'bar',
+    data: {
+      labels: campaigns.map(c => c.name),
+      datasets: [
+        { label: 'Website Visits', data: campaigns.map(c => c.actions.websiteVisit), backgroundColor: '#818cf8', borderRadius: 4 },
+        { label: 'Add to Cart', data: campaigns.map(c => c.actions.addToCart), backgroundColor: '#f5a623', borderRadius: 4 },
+        { label: 'Purchases', data: campaigns.map(c => c.actions.purchase), backgroundColor: '#34d399', borderRadius: 4 },
+      ],
+    },
+    options: {
+      scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.04)' } } },
+      plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtFull(ctx.raw) } } },
+    },
+  });
+}
+
+// ===== PLATFORM PERFORMANCE TAB =====
+function renderPlatforms() {
+  const el = document.getElementById('tab-platforms');
+  const totalSpend = platforms.reduce((sum, p) => sum + p.cost, 0);
+  const totalConv = platforms.reduce((sum, p) => sum + p.conversions, 0);
+
+  el.innerHTML = `
+    <div class="space-y">
+
+      <!-- Platform KPIs -->
+      <div class="grid-4">
+        ${platforms.map(p => kpi(p.platform, fmtExact(p.impressions), 'CTR: ' + pct(p.ctr), '', '')).join('')}
+      </div>
+
+      <!-- Charts -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Impressions by Platform</div>
+          <div class="chart-container" style="height:280px"><canvas id="chartPlatImpr"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Spend Distribution</div>
+          <div class="chart-container" style="height:280px"><canvas id="chartPlatSpend"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Conversions by Platform</div>
+          <div class="chart-container" style="height:280px"><canvas id="chartPlatConv"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">CTR Performance by Platform</div>
+          <div class="chart-container" style="height:280px"><canvas id="chartPlatCTR"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Platform Table -->
+      <div class="card">
+        <div class="card-title">Platform Performance Comparison</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>Platform</th>
+              <th class="right">Impressions</th>
+              <th class="right">Clicks</th>
+              <th class="right">CTR</th>
+              <th class="right">Total Spend</th>
+              <th class="right">Conversions</th>
+              <th class="right">Cost/Conv</th>
+            </tr></thead>
+            <tbody>
+              ${platforms.map(p => {
+                const costPerConv = p.cost / p.conversions;
+                const cpc = p.cost / p.clicks;
+                return `<tr>
+                  <td style="font-weight:700;color:${p.color}">${p.platform}</td>
+                  <td class="right">${fmtExact(p.impressions)}</td>
+                  <td class="right">${fmtExact(p.clicks)}</td>
+                  <td class="right">${pct(p.ctr)}</td>
+                  <td class="right" style="font-weight:600">${fmtINR(p.cost)}</td>
+                  <td class="right" style="color:#34d399;font-weight:700">${fmtFull(p.conversions)}</td>
+                  <td class="right" style="font-weight:700;color:#818cf8">${fmtINR(costPerConv)}</td>
+                </tr>`;
+              }).join('')}
+              <tr style="border-top:2px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.03)">
+                <td style="font-weight:800;color:#818cf8">Total</td>
+                <td class="right" style="font-weight:700">${fmtExact(accountTotals.impressions)}</td>
+                <td class="right" style="font-weight:700">${fmtExact(accountTotals.clicks)}</td>
+                <td class="right" style="font-weight:700">${pct(accountTotals.ctr)}</td>
+                <td class="right" style="font-weight:800;color:#f5a623">${fmtINR(accountTotals.cost)}</td>
+                <td class="right" style="font-weight:800;color:#34d399">${fmtFull(accountTotals.conversions)}</td>
+                <td class="right" style="font-weight:800;color:#818cf8">${fmtINR(accountTotals.costPerConv)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  makeChart('chartPlatImpr', {
+    type: 'bar',
+    data: {
+      labels: platforms.map(p => p.platform),
+      datasets: [{ label: 'Impressions', data: platforms.map(p => p.impressions), backgroundColor: platforms.map(p => p.color + 'bb'), borderRadius: 6 }],
+    },
+    options: {
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmtFull(ctx.raw) } } },
+      scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => (v/1000000).toFixed(1) + 'M' } } },
+    },
+  });
+
+  makeChart('chartPlatSpend', {
+    type: 'doughnut',
+    data: {
+      labels: platforms.map(p => p.platform),
+      datasets: [{ data: platforms.map(p => p.cost), backgroundColor: platforms.map(p => p.color), borderWidth: 0 }],
+    },
+    options: { cutout: '60%', plugins: { tooltip: { callbacks: { label: ctx => ctx.label + ': ₹' + fmtFull(ctx.raw) } } } },
+  });
+
+  makeChart('chartPlatConv', {
+    type: 'bar',
+    data: {
+      labels: platforms.map(p => p.platform),
+      datasets: [{ label: 'Conversions', data: platforms.map(p => p.conversions), backgroundColor: platforms.map(p => p.color), borderRadius: 6 }],
+    },
+    options: {
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmtFull(ctx.raw) + ' conv.' } } },
+      scales: { x: { grid: { display: false } } },
+    },
+  });
+
+  makeChart('chartPlatCTR', {
+    type: 'bar',
+    data: {
+      labels: platforms.map(p => p.platform),
+      datasets: [{ label: 'CTR %', data: platforms.map(p => p.ctr), backgroundColor: platforms.map(p => p.color + '99'), borderRadius: 6 }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => v + '%' } } },
+    },
+  });
+}
+
+// ===== INIT =====
+renderTabs();
+renderOverview();
+</script>
+</body>
+</html>

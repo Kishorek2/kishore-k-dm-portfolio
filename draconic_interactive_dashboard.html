@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draconic.ai Marketing Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0c0604;
+    color: #f5f0eb;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a0a00 0%, #2d1200 50%, #1a0a00 100%);
+    border-bottom: 1px solid rgba(255,174,0,0.15);
+    padding: 1.5rem 2rem;
+  }
+  .header-inner {
+    max-width: 1500px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .brand-title { font-size: 1.5rem; font-weight: 800; color: #ffae00; }
+  .brand-sub { font-size: 0.8rem; margin-top: 0.25rem; color: rgba(245,240,235,0.5); }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+  .date-controls { display: flex; gap: 0.5rem; align-items: center; }
+  .date-controls span { color: rgba(245,240,235,0.4); font-size: 0.85rem; }
+  input[type="date"] {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    background: rgba(255,174,0,0.08);
+    border: 1px solid rgba(255,174,0,0.2);
+    color: #ffae00;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) hue-rotate(0deg); }
+  .presets { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+  .preset-btn {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: rgba(245,240,235,0.5);
+  }
+  .preset-btn.active {
+    background: rgba(255,174,0,0.2);
+    border: 1px solid rgba(255,174,0,0.4);
+    color: #ffae00;
+  }
+  .preset-btn:hover { background: rgba(255,174,0,0.1); }
+  .tabs-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+  }
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,174,0,0.1);
+  }
+  .tab-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: rgba(245,240,235,0.5);
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn.active {
+    background: rgba(255,174,0,0.1);
+    border-bottom: 2px solid #ffae00;
+    color: #ffae00;
+  }
+  .tab-btn:hover { color: #ffae00; }
+  .content {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .space-y > * + * { margin-top: 1.5rem; }
+  .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .grid-1 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .kpi {
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .kpi-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.375rem;
+    font-weight: 600;
+    color: rgba(245,240,235,0.4);
+  }
+  .kpi-value { font-size: 1.5rem; font-weight: 800; color: #fff; }
+  .kpi-value.highlight { color: #ffae00; }
+  .kpi-sub {
+    font-size: 0.68rem;
+    margin-top: 0.25rem;
+    color: rgba(245,240,235,0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .kpi-sub .up { color: #34d399; }
+  .kpi-sub .down { color: #f87171; }
+  .card {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: rgba(245,240,235,0.5);
+  }
+  .gst-panel {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(255,174,0,0.06), rgba(255,174,0,0.02));
+    border: 1px solid rgba(255,174,0,0.12);
+  }
+  .gst-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; color: #ffae00; }
+  .gst-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; font-size: 0.85rem; }
+  .gst-row span.label { color: rgba(245,240,235,0.5); }
+  .gst-row span.value { font-weight: 700; margin-left: 0.5rem; }
+  .gst-camps { margin-top: 0.75rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; font-size: 0.85rem; }
+  .gst-camp-card {
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.3);
+  }
+  .gst-camp-label { font-size: 0.7rem; margin-bottom: 0.25rem; color: rgba(245,240,235,0.4); }
+  .gst-camp-value { font-size: 1.1rem; font-weight: 800; }
+  .chart-container { position: relative; width: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th {
+    text-align: left;
+    padding: 0.625rem;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(245,240,235,0.4);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  th.right, td.right { text-align: right; }
+  td { padding: 0.625rem; color: #f5f0eb; }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(255,174,0,0.03); }
+  .camp-card {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+  .camp-card-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+  .camp-row { display: flex; justify-content: space-between; padding: 0.25rem 0; font-size: 0.8rem; }
+  .camp-row .label { color: rgba(245,240,235,0.5); }
+  .camp-row .val { font-weight: 700; }
+  .camp-separator { border-top-width: 1px; border-top-style: solid; padding-top: 0.5rem; margin-top: 0.5rem; }
+  .source-toggle { display: flex; gap: 0.5rem; }
+  .source-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .funnel { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem 0; flex-wrap: wrap; }
+  .funnel-item { text-align: center; }
+  .funnel-value { font-size: 1.875rem; font-weight: 800; }
+  .funnel-label { font-size: 0.7rem; margin-top: 0.25rem; font-weight: 600; color: rgba(245,240,235,0.5); }
+  .funnel-pct { font-size: 0.7rem; }
+  .funnel-arrow { font-size: 1.5rem; color: rgba(245,240,235,0.2); }
+  .note { font-size: 0.7rem; margin-top: 0.75rem; color: rgba(245,240,235,0.3); }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.7rem;
+    color: rgba(245,240,235,0.25);
+    border-top: 1px solid rgba(255,174,0,0.06);
+  }
+  .overflow-x { overflow-x: auto; }
+  @media (max-width: 1024px) {
+    .grid-6 { grid-template-columns: repeat(3, 1fr); }
+    .grid-5 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .gst-camps { grid-template-columns: repeat(2, 1fr); }
+    .gst-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .header { padding: 1rem; }
+    .header-inner { flex-direction: column; }
+    .content { padding: 1rem; }
+    .tabs-container { padding: 0.5rem 1rem 0; }
+    .grid-6 { grid-template-columns: repeat(2, 1fr); }
+    .grid-5 { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .gst-camps { grid-template-columns: 1fr; }
+    .funnel { flex-direction: column; }
+    .funnel-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="brand-title">draconic.ai</div>
+      <div class="brand-sub">Marketing Performance Dashboard &mdash; Interactive</div>
+    </div>
+    <div class="controls">
+      <div class="date-controls">
+        <input type="date" id="startDate" value="2026-03-03" min="2026-03-03" max="2026-03-22">
+        <span>to</span>
+        <input type="date" id="endDate" value="2026-03-22" min="2026-03-03" max="2026-03-22">
+      </div>
+      <div class="presets" id="presets"></div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-container">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="content">
+  <div id="tab-overview" class="tab-content active"></div>
+  <div id="tab-events" class="tab-content"></div>
+  <div id="tab-campaigns" class="tab-content"></div>
+  <div id="tab-keywords" class="tab-content"></div>
+  <div id="tab-cities" class="tab-content"></div>
+</div>
+
+<footer>
+  Draconic.ai Performance Dashboard &middot; Google Ads (436-761-7154) + GA4 (524488215) &middot; CPL includes 18% GST
+</footer>
+
+<script>
+// ===== DATA =====
+const GST_RATE = 0.18;
+
+const dailyData = [
+  { date:'2026-03-03', day:'Mon', pmax:{c:2307,i:19934,conv:140.18,s:1867.17}, search:{c:163,i:1899,conv:162.87,s:1392.72}, youtube:{c:11,i:224,conv:0,s:34.46}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:584,chat:750,first:275}, paid:{signups:120,chat:74,first:33} },
+  { date:'2026-03-04', day:'Tue', pmax:{c:1988,i:13389,conv:327.11,s:2816.12}, search:{c:203,i:2953,conv:160.73,s:2382.66}, youtube:{c:964,i:31011,conv:17,s:5593.72}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:855,chat:1110,first:447}, paid:{signups:284,chat:225,first:94} },
+  { date:'2026-03-05', day:'Wed', pmax:{c:4162,i:21837,conv:596.33,s:3949.42}, search:{c:568,i:33577,conv:195.52,s:3510.11}, youtube:{c:554,i:18755,conv:59.55,s:8249.71}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:1061,chat:854,first:343}, paid:{signups:493,chat:186,first:78} },
+  { date:'2026-03-06', day:'Thu', pmax:{c:5443,i:24673,conv:1044.20,s:5012.01}, search:{c:493,i:21762,conv:120.40,s:2406.55}, youtube:{c:539,i:24758,conv:98.05,s:11082.07}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:1344,chat:867,first:325}, paid:{signups:784,chat:152,first:80} },
+  { date:'2026-03-07', day:'Fri', pmax:{c:8312,i:56415,conv:974.68,s:6001.64}, search:{c:638,i:40092,conv:177.98,s:5918.62}, youtube:{c:825,i:44563,conv:172.62,s:19533.82}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:1112,chat:544,first:253}, paid:{signups:734,chat:221,first:125} },
+  { date:'2026-03-08', day:'Sat', pmax:{c:4513,i:33741,conv:326.00,s:1868.09}, search:{c:184,i:15476,conv:48.67,s:2028.33}, youtube:{c:88,i:4247,conv:26.73,s:1966.15}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:551,chat:401,first:176}, paid:{signups:221,chat:62,first:30} },
+  { date:'2026-03-09', day:'Sun', pmax:{c:0,i:0,conv:0,s:0}, search:{c:0,i:0,conv:0,s:0}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:366,chat:444,first:172}, paid:{signups:6,chat:3,first:1} },
+  { date:'2026-03-10', day:'Mon', pmax:{c:545,i:3982,conv:176.96,s:1230.53}, search:{c:93,i:1330,conv:77,s:3817.54}, youtube:{c:0,i:50,conv:0,s:10}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:506,chat:447,first:194}, paid:{signups:140,chat:68,first:36} },
+  { date:'2026-03-11', day:'Tue', pmax:{c:1324,i:7341,conv:362.36,s:1123.33}, search:{c:174,i:4035,conv:124,s:2774.19}, youtube:{c:0,i:230,conv:0,s:50.33}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:635,chat:535,first:214}, paid:{signups:269,chat:109,first:46} },
+  { date:'2026-03-12', day:'Wed', pmax:{c:1991,i:13028,conv:335.87,s:1122.69}, search:{c:162,i:3111,conv:103,s:2751.82}, youtube:{c:0,i:440,conv:0,s:135.28}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:636,chat:576,first:221}, paid:{signups:242,chat:93,first:35} },
+  { date:'2026-03-13', day:'Thu', pmax:{c:1616,i:9350,conv:386.92,s:1169.77}, search:{c:205,i:4250,conv:131.95,s:2739.11}, youtube:{c:0,i:723,conv:0,s:157.76}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:669,chat:571,first:220}, paid:{signups:271,chat:95,first:42} },
+  { date:'2026-03-14', day:'Fri', pmax:{c:4575,i:33572,conv:471.10,s:1641.53}, search:{c:321,i:7959,conv:168.67,s:4828.50}, youtube:{c:2,i:844,conv:0,s:297.69}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:559,chat:252,first:115}, paid:{signups:333,chat:108,first:48} },
+  { date:'2026-03-15', day:'Sat', pmax:{c:7898,i:59408,conv:749.20,s:2976.49}, search:{c:428,i:14463,conv:274.07,s:8345.50}, youtube:{c:2,i:787,conv:0,s:282.05}, retargeting:{c:0,i:0,conv:0,s:0}, ga4:{signups:715,chat:472,first:186}, paid:{signups:518,chat:284,first:112} },
+  { date:'2026-03-16', day:'Sun', pmax:{c:6659,i:49210,conv:772.79,s:2480.66}, search:{c:298,i:6916,conv:156.06,s:4732.23}, youtube:{c:0,i:62,conv:0,s:19.41}, retargeting:{c:575,i:3966,conv:43.00,s:924.22}, ga4:{signups:792,chat:539,first:208}, paid:{signups:462,chat:139,first:60} },
+  { date:'2026-03-17', day:'Mon', pmax:{c:4120,i:27161,conv:678.21,s:2211.65}, search:{c:247,i:6013,conv:224.45,s:4773.96}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:414,i:3553,conv:85.90,s:690.21}, ga4:{signups:911,chat:583,first:252}, paid:{signups:505,chat:163,first:72} },
+  { date:'2026-03-18', day:'Tue', pmax:{c:4192,i:26951,conv:665.51,s:1854.88}, search:{c:248,i:8207,conv:210.58,s:4530.25}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:587,i:4075,conv:202.54,s:747.00}, ga4:{signups:966,chat:641,first:251}, paid:{signups:532,chat:183,first:68} },
+  { date:'2026-03-19', day:'Thu', pmax:{c:2896,i:18657,conv:492.57,s:1508.93}, search:{c:245,i:6177,conv:227,s:5064.71}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:539,i:3651,conv:157.38,s:707.96}, ga4:{signups:755,chat:584,first:229}, paid:{signups:439,chat:248,first:88} },
+  { date:'2026-03-20', day:'Fri', pmax:{c:3178,i:18727,conv:621.80,s:2163.88}, search:{c:201,i:5559,conv:178.98,s:4247.73}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:1145,i:7281,conv:184.46,s:740.64}, ga4:{signups:894,chat:519,first:223}, paid:{signups:515,chat:150,first:77} },
+  { date:'2026-03-21', day:'Sat', pmax:{c:2867,i:19106,conv:476.72,s:1565.45}, search:{c:235,i:4041,conv:215,s:4656.38}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:973,i:5065,conv:190.44,s:686.72}, ga4:{signups:742,chat:339,first:166}, paid:{signups:462,chat:139,first:77} },
+  { date:'2026-03-22', day:'Sun', pmax:{c:290,i:2101,conv:41,s:151.37}, search:{c:70,i:910,conv:40,s:1131.96}, youtube:{c:0,i:0,conv:0,s:0}, retargeting:{c:166,i:1041,conv:34.91,s:96.98}, ga4:{signups:256,chat:214,first:93}, paid:{signups:10,chat:1,first:2} },
+];
+
+const keywords = [
+  { keyword: 'draconic ai', impressions: 52388, clicks: 908, conversions: 453, spend: 5258, ctr: 1.73, convRate: 49.9 },
+  { keyword: 'AI Trading Platform', impressions: 28755, clicks: 565, conversions: 166, spend: 5183, ctr: 1.97, convRate: 29.4 },
+  { keyword: 'ai trading terminal', impressions: 1530, clicks: 124, conversions: 152, spend: 2316, ctr: 8.10, convRate: 122.6 },
+  { keyword: 'ai stock analysis tool', impressions: 1203, clicks: 146, conversions: 117, spend: 4562, ctr: 12.14, convRate: 80.1 },
+  { keyword: 'ai trading', impressions: 2217, clicks: 140, conversions: 115, spend: 4571, ctr: 6.31, convRate: 82.1 },
+  { keyword: 'professional trading app', impressions: 4579, clicks: 342, conversions: 103, spend: 10532, ctr: 7.47, convRate: 30.1 },
+  { keyword: 'ai trading analysis', impressions: 616, clicks: 111, conversions: 73, spend: 1441, ctr: 18.02, convRate: 65.3 },
+  { keyword: 'trading analytics', impressions: 2042, clicks: 90, conversions: 51, spend: 1430, ctr: 4.41, convRate: 56.7 },
+  { keyword: 'learn trading with ai', impressions: 1928, clicks: 75, conversions: 40, spend: 1556, ctr: 3.89, convRate: 53.3 },
+  { keyword: 'ai trading intelligence', impressions: 358, clicks: 38, conversions: 31, spend: 497, ctr: 10.61, convRate: 80.3 },
+  { keyword: 'AI stock research platform', impressions: 235, clicks: 33, conversions: 25, spend: 600, ctr: 14.04, convRate: 75.8 },
+  { keyword: 'real time stock analysis AI', impressions: 275, clicks: 40, conversions: 24, spend: 480, ctr: 14.55, convRate: 58.8 },
+  { keyword: 'trading analysis software', impressions: 2702, clicks: 50, conversions: 23, spend: 555, ctr: 1.85, convRate: 46.3 },
+  { keyword: 'option chain analysis tool', impressions: 8254, clicks: 136, conversions: 19, spend: 1220, ctr: 1.65, convRate: 14.0 },
+  { keyword: 'options trading tool', impressions: 315, clicks: 14, conversions: 13, spend: 330, ctr: 4.44, convRate: 92.9 },
+  { keyword: 'live market scanner', impressions: 1648, clicks: 25, conversions: 13, spend: 425, ctr: 1.52, convRate: 52.0 },
+  { keyword: 'algo trading india', impressions: 308, clicks: 11, conversions: 9, spend: 299, ctr: 3.57, convRate: 81.8 },
+  { keyword: 'best app to learn trading', impressions: 53, clicks: 7, conversions: 8, spend: 96, ctr: 13.21, convRate: 114.3 },
+  { keyword: 'ai trading tool india', impressions: 116, clicks: 9, conversions: 8, spend: 178, ctr: 7.76, convRate: 88.9 },
+];
+
+const cities = [
+  { city: 'Indore', impressions: 24047, clicks: 3270, conversions: 402, spend: 3804 },
+  { city: 'Ahmedabad', impressions: 20349, clicks: 2101, conversions: 332, spend: 4148 },
+  { city: 'Bengaluru', impressions: 24781, clicks: 1262, conversions: 307, spend: 7512 },
+  { city: 'Jaipur', impressions: 21529, clicks: 2305, conversions: 266, spend: 3646 },
+  { city: 'Pune', impressions: 21679, clicks: 1492, conversions: 266, spend: 4199 },
+  { city: 'Kolkata', impressions: 17890, clicks: 1449, conversions: 247, spend: 4495 },
+  { city: 'New Delhi', impressions: 19276, clicks: 1155, conversions: 243, spend: 4519 },
+  { city: 'Hyderabad', impressions: 9651, clicks: 896, conversions: 199, spend: 1875 },
+  { city: 'Chennai', impressions: 18318, clicks: 1189, conversions: 175, spend: 4564 },
+  { city: 'Mumbai', impressions: 20701, clicks: 938, conversions: 168, spend: 6062 },
+  { city: 'Rajkot', impressions: 6056, clicks: 760, conversions: 131, spend: 1105 },
+  { city: 'Vadodara', impressions: 6608, clicks: 743, conversions: 99, spend: 1168 },
+];
+
+// ===== UTILITIES =====
+function fmt(n) { return n.toLocaleString('en-IN'); }
+function fmtCurrency(n) { return '\u20B9' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function pct(n) { return n.toFixed(1) + '%'; }
+function shortDate(d) {
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+}
+
+function getFiltered() {
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  return dailyData.filter(d => d.date >= start && d.date <= end);
+}
+
+function calcTotals(filtered) {
+  const totalSpend = filtered.reduce((s, d) => s + d.pmax.s + d.search.s + d.youtube.s + d.retargeting.s, 0);
+  const totalClicks = filtered.reduce((s, d) => s + d.pmax.c + d.search.c + d.youtube.c + d.retargeting.c, 0);
+  const totalImpressions = filtered.reduce((s, d) => s + d.pmax.i + d.search.i + d.youtube.i + d.retargeting.i, 0);
+  const totalConversions = filtered.reduce((s, d) => s + d.pmax.conv + d.search.conv + d.youtube.conv + d.retargeting.conv, 0);
+  const totalSignups = filtered.reduce((s, d) => s + d.ga4.signups, 0);
+  const totalChatMsgs = filtered.reduce((s, d) => s + d.ga4.chat, 0);
+  const totalFirstMsgs = filtered.reduce((s, d) => s + d.ga4.first, 0);
+  const totalPaidSignups = filtered.reduce((s, d) => s + d.paid.signups, 0);
+  const totalPaidChatMsgs = filtered.reduce((s, d) => s + d.paid.chat, 0);
+  const totalPaidFirstMsgs = filtered.reduce((s, d) => s + d.paid.first, 0);
+  const spendWithGST = totalSpend * (1 + GST_RATE);
+  const cplWithoutGST = totalConversions > 0 ? totalSpend / totalConversions : 0;
+  const cplWithGST = totalConversions > 0 ? spendWithGST / totalConversions : 0;
+  const ctr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+  const activationRate = totalSignups > 0 ? (totalFirstMsgs / totalSignups) * 100 : 0;
+  const paidActivationRate = totalPaidSignups > 0 ? (totalPaidFirstMsgs / totalPaidSignups) * 100 : 0;
+  return { totalSpend, spendWithGST, totalClicks, totalImpressions, totalConversions, totalSignups, totalChatMsgs, totalFirstMsgs, totalPaidSignups, totalPaidChatMsgs, totalPaidFirstMsgs, cplWithoutGST, cplWithGST, ctr, activationRate, paidActivationRate };
+}
+
+function sumCampaign(filtered, key) {
+  return {
+    clicks: filtered.reduce((s, d) => s + d[key].c, 0),
+    impressions: filtered.reduce((s, d) => s + d[key].i, 0),
+    conversions: filtered.reduce((s, d) => s + d[key].conv, 0),
+    spend: filtered.reduce((s, d) => s + d[key].s, 0),
+  };
+}
+
+function campaignTotals(filtered) {
+  return { pmax: sumCampaign(filtered, 'pmax'), search: sumCampaign(filtered, 'search'), youtube: sumCampaign(filtered, 'youtube'), retargeting: sumCampaign(filtered, 'retargeting') };
+}
+
+// ===== STATE =====
+let activeTab = 'overview';
+let eventSource = 'all';
+let charts = [];
+
+function destroyCharts() {
+  charts.forEach(c => c.destroy());
+  charts = [];
+}
+
+function createChart(canvasId, config) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return null;
+  const defaults = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: 'rgba(245,240,235,0.6)', font: { family: 'Inter', size: 11 }, boxWidth: 12, padding: 16 } },
+    },
+    scales: {}
+  };
+  if (config.type !== 'doughnut' && config.type !== 'pie') {
+    defaults.scales = {
+      x: { ticks: { color: 'rgba(245,240,235,0.4)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { ticks: { color: 'rgba(245,240,235,0.4)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    };
+  }
+  const merged = deepMerge(defaults, config.options || {});
+  config.options = merged;
+  const chart = new Chart(ctx, config);
+  charts.push(chart);
+  return chart;
+}
+
+function deepMerge(target, source) {
+  const output = Object.assign({}, target);
+  for (const key of Object.keys(source)) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
+      output[key] = deepMerge(target[key], source[key]);
+    } else {
+      output[key] = source[key];
+    }
+  }
+  return output;
+}
+
+// ===== PRESETS =====
+const presets = [
+  { label: 'All (Mar 3-22)', start: '2026-03-03', end: '2026-03-22' },
+  { label: 'Week 1 (Mar 3-8)', start: '2026-03-03', end: '2026-03-08' },
+  { label: 'Week 2 (Mar 10-15)', start: '2026-03-10', end: '2026-03-15' },
+  { label: 'Week 3 (Mar 16-22)', start: '2026-03-16', end: '2026-03-22' },
+  { label: 'Retargeting (Mar 16+)', start: '2026-03-16', end: '2026-03-22' },
+];
+
+function renderPresets() {
+  const container = document.getElementById('presets');
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  container.innerHTML = presets.map(p => {
+    const active = start === p.start && end === p.end;
+    return `<button class="preset-btn ${active ? 'active' : ''}" onclick="setPreset('${p.start}','${p.end}')">${p.label}</button>`;
+  }).join('');
+}
+
+function setPreset(start, end) {
+  document.getElementById('startDate').value = start;
+  document.getElementById('endDate').value = end;
+  renderAll();
+}
+
+// ===== TABS =====
+const tabDefs = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'events', label: 'GA4 Events' },
+  { key: 'campaigns', label: 'Campaigns' },
+  { key: 'keywords', label: 'Keywords' },
+  { key: 'cities', label: 'Cities' },
+];
+
+function renderTabs() {
+  const container = document.getElementById('tabs');
+  container.innerHTML = tabDefs.map(t =>
+    `<button class="tab-btn ${activeTab === t.key ? 'active' : ''}" onclick="switchTab('${t.key}')">${t.label}</button>`
+  ).join('');
+  tabDefs.forEach(t => {
+    const el = document.getElementById('tab-' + t.key);
+    el.classList.toggle('active', activeTab === t.key);
+  });
+}
+
+function switchTab(key) {
+  activeTab = key;
+  renderAll();
+}
+
+// ===== RENDER ALL =====
+function renderAll() {
+  destroyCharts();
+  renderPresets();
+  renderTabs();
+  const filtered = getFiltered();
+  const totals = calcTotals(filtered);
+  const camps = campaignTotals(filtered);
+  const dateLabels = filtered.map(d => shortDate(d.date));
+
+  if (activeTab === 'overview') renderOverview(filtered, totals, camps, dateLabels);
+  if (activeTab === 'events') renderEvents(filtered, totals, dateLabels);
+  if (activeTab === 'campaigns') renderCampaigns(filtered, totals, camps, dateLabels);
+  if (activeTab === 'keywords') renderKeywords();
+  if (activeTab === 'cities') renderCities();
+}
+
+// ===== OVERVIEW TAB =====
+function renderOverview(filtered, totals, camps, dateLabels) {
+  const el = document.getElementById('tab-overview');
+  el.innerHTML = `
+    <div class="space-y">
+      <div class="grid-6">
+        ${kpi('Total Ad Spend', fmtCurrency(totals.totalSpend), 'With GST: ' + fmtCurrency(totals.spendWithGST), true)}
+        ${kpi('Total Clicks', fmt(totals.totalClicks), 'CTR: ' + pct(totals.ctr))}
+        ${kpi('Conversions (Ads)', fmt(Math.round(totals.totalConversions)), 'Google Ads DDA')}
+        ${kpi('CPL (excl. GST)', fmtCurrency(totals.cplWithoutGST), 'Ad spend / conv', true)}
+        ${kpi('CPL (incl. 18% GST)', fmtCurrency(totals.cplWithGST), 'True cost per lead', true)}
+        ${kpi('GA4 Sign-ups', fmt(totals.totalSignups), 'signup_complete events')}
+      </div>
+
+      <div class="gst-panel">
+        <div class="gst-title">GST Impact on Cost Per Lead</div>
+        <div class="gst-row">
+          <div><span class="label">Ad Spend (net):</span><span class="value" style="font-weight:700;margin-left:0.5rem">${fmtCurrency(totals.totalSpend)}</span></div>
+          <div><span class="label">+ 18% GST:</span><span class="value" style="font-weight:700;margin-left:0.5rem;color:#f87171">${fmtCurrency(totals.totalSpend * GST_RATE)}</span></div>
+          <div><span class="label">Total incl. GST:</span><span class="value" style="font-weight:700;margin-left:0.5rem;color:#ffae00">${fmtCurrency(totals.spendWithGST)}</span></div>
+        </div>
+        <div class="gst-camps">
+          ${gstCampCard('PMax CPL (w/ GST)', camps.pmax, '#60a5fa')}
+          ${gstCampCard('Search CPL (w/ GST)', camps.search, '#ffae00')}
+          ${gstCampCard('YouTube CPL (w/ GST)', camps.youtube, '#ef4444')}
+          ${gstCampCard('Retargeting CPL (w/ GST)', camps.retargeting, '#a78bfa')}
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Daily Conversions by Campaign</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartConvByDay"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Daily Ad Spend (\u20B9)</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartSpendByDay"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Daily CPL (incl. 18% GST) &mdash; All Campaigns Combined</div>
+        <div class="chart-container" style="height:220px"><canvas id="chartCPLTrend"></canvas></div>
+      </div>
+    </div>
+  `;
+
+  createChart('chartConvByDay', {
+    type: 'bar',
+    data: {
+      labels: dateLabels,
+      datasets: [
+        { label: 'PMax', data: filtered.map(d => d.pmax.conv), backgroundColor: 'rgba(96,165,250,0.7)', borderRadius: 4 },
+        { label: 'Search', data: filtered.map(d => d.search.conv), backgroundColor: 'rgba(255,174,0,0.7)', borderRadius: 4 },
+        { label: 'YouTube', data: filtered.map(d => d.youtube.conv), backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 4 },
+        { label: 'Retargeting', data: filtered.map(d => d.retargeting.conv), backgroundColor: 'rgba(167,139,250,0.7)', borderRadius: 4 },
+      ],
+    },
+    options: { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true } } }
+  });
+
+  createChart('chartSpendByDay', {
+    type: 'line',
+    data: {
+      labels: dateLabels,
+      datasets: [
+        { label: 'PMax', data: filtered.map(d => d.pmax.s), borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+        { label: 'Search', data: filtered.map(d => d.search.s), borderColor: '#ffae00', backgroundColor: 'rgba(255,174,0,0.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+        { label: 'YouTube', data: filtered.map(d => d.youtube.s), borderColor: '#ef4444', backgroundColor: 'rgba(248,113,113,0.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+        { label: 'Retargeting', data: filtered.map(d => d.retargeting.s), borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+      ],
+    },
+  });
+
+  createChart('chartCPLTrend', {
+    type: 'line',
+    data: {
+      labels: dateLabels,
+      datasets: [{
+        label: 'CPL (incl. GST)',
+        data: filtered.map(d => {
+          const totalConv = d.pmax.conv + d.search.conv + d.youtube.conv + d.retargeting.conv;
+          const totalSpend = (d.pmax.s + d.search.s + d.youtube.s + d.retargeting.s) * 1.18;
+          return totalConv > 0 ? +(totalSpend / totalConv).toFixed(2) : null;
+        }),
+        borderColor: '#ffae00',
+        backgroundColor: 'rgba(255,174,0,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: '#ffae00',
+        borderWidth: 2.5,
+        spanGaps: true,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: function(v) { return '\u20B9' + v; } } } },
+    },
+  });
+}
+
+function gstCampCard(label, camp, color) {
+  const val = camp.conversions > 0 ? (camp.spend * 1.18) / camp.conversions : 0;
+  return `<div class="gst-camp-card">
+    <div class="gst-camp-label">${label}</div>
+    <div class="gst-camp-value" style="color:${color}">${fmtCurrency(val)}</div>
+  </div>`;
+}
+
+function kpi(label, value, sub, highlight, trend) {
+  let subHtml = '';
+  if (sub) {
+    let arrow = '';
+    if (trend === 'up') arrow = '<span class="up">\u25B2</span>';
+    if (trend === 'down') arrow = '<span class="down">\u25BC</span>';
+    subHtml = `<div class="kpi-sub">${arrow}${sub}</div>`;
+  }
+  return `<div class="kpi">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value ${highlight ? 'highlight' : ''}">${value}</div>
+    ${subHtml}
+  </div>`;
+}
+
+// ===== EVENTS TAB =====
+function renderEvents(filtered, totals, dateLabels) {
+  const src = eventSource;
+  const tSignups = src === 'all' ? totals.totalSignups : totals.totalPaidSignups;
+  const tChat = src === 'all' ? totals.totalChatMsgs : totals.totalPaidChatMsgs;
+  const tFirst = src === 'all' ? totals.totalFirstMsgs : totals.totalPaidFirstMsgs;
+  const actRate = src === 'all' ? totals.activationRate : totals.paidActivationRate;
+  const dormant = tSignups - tFirst;
+  const chatPct = tSignups > 0 ? (tChat / tSignups) * 100 : 0;
+
+  const el = document.getElementById('tab-events');
+  el.innerHTML = `
+    <div class="space-y">
+      <div class="source-toggle">
+        <button class="source-btn" id="srcAll" onclick="setEventSource('all')" style="background:${src === 'all' ? 'rgba(255,174,0,0.15)' : 'rgba(255,255,255,0.04)'};border:1px solid ${src === 'all' ? 'rgba(255,174,0,0.3)' : 'rgba(255,255,255,0.06)'};color:${src === 'all' ? '#ffae00' : 'rgba(245,240,235,0.5)'}">All Sources</button>
+        <button class="source-btn" id="srcPaid" onclick="setEventSource('paid')" style="background:${src === 'paid' ? 'rgba(96,165,250,0.15)' : 'rgba(255,255,255,0.04)'};border:1px solid ${src === 'paid' ? 'rgba(96,165,250,0.3)' : 'rgba(255,255,255,0.06)'};color:${src === 'paid' ? '#60a5fa' : 'rgba(245,240,235,0.5)'}">Paid Only (Google/CPC)</button>
+      </div>
+
+      <div class="grid-5">
+        ${kpi('Sign-ups', fmt(tSignups), 'signup_complete', true)}
+        ${kpi('Chat Messages', fmt(tChat), 'chat_message_sent')}
+        ${kpi('First Messages', fmt(tFirst), 'chat_first_message')}
+        ${kpi('Activation Rate', pct(actRate), '1st msg / signups')}
+        ${kpi('Dormant Users', fmt(dormant), 'Signed up, never tried product', false, 'down')}
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Daily: signup_complete vs chat events (${src === 'all' ? 'All Sources' : 'Paid Only'})</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartSignups"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Activation Rate (%) by Day</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartActivation"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Day-by-Day Breakdown &mdash; ${src === 'all' ? 'All Sources' : 'Paid (Google/CPC) Only'}</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>Date</th><th>Day</th><th class="right">Sign-ups</th><th class="right">Chat Msgs</th><th class="right">First Msgs</th><th class="right">Activation %</th><th class="right">Msg/Signup</th>
+            </tr></thead>
+            <tbody>
+              ${filtered.map(d => {
+                const signups = src === 'all' ? d.ga4.signups : d.paid.signups;
+                const chat = src === 'all' ? d.ga4.chat : d.paid.chat;
+                const first = src === 'all' ? d.ga4.first : d.paid.first;
+                if (signups === 0 && chat === 0) return '';
+                const ar = signups > 0 ? (first / signups) * 100 : 0;
+                const mps = signups > 0 ? chat / signups : 0;
+                const arColor = ar >= 40 ? '#34d399' : ar >= 25 ? '#ffae00' : '#f87171';
+                const mpsColor = mps >= 1 ? '#34d399' : 'rgba(245,240,235,0.5)';
+                return `<tr>
+                  <td style="font-weight:700;color:#ffae00">${shortDate(d.date)}</td>
+                  <td style="color:rgba(245,240,235,0.5)">${d.day}</td>
+                  <td class="right" style="font-weight:600">${fmt(signups)}</td>
+                  <td class="right" style="color:#60a5fa">${fmt(chat)}</td>
+                  <td class="right" style="color:#34d399">${fmt(first)}</td>
+                  <td class="right" style="font-weight:600;color:${arColor}">${pct(ar)}</td>
+                  <td class="right" style="color:${mpsColor}">${mps.toFixed(2)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Engagement Funnel</div>
+        <div class="funnel">
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#ffae00">${fmt(tSignups)}</div>
+            <div class="funnel-label">Sign-ups</div>
+            <div class="funnel-pct" style="color:#ffae00">100%</div>
+          </div>
+          <div class="funnel-arrow">\u2192</div>
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#60a5fa">${fmt(tChat)}</div>
+            <div class="funnel-label">Chat Messages</div>
+            <div class="funnel-pct" style="color:#60a5fa">${pct(chatPct)}</div>
+          </div>
+          <div class="funnel-arrow">\u2192</div>
+          <div class="funnel-item">
+            <div class="funnel-value" style="color:#34d399">${fmt(tFirst)}</div>
+            <div class="funnel-label">First Message</div>
+            <div class="funnel-pct" style="color:#34d399">${pct(actRate)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Signups chart
+  const signupDatasets = src === 'all' ? [
+    { label: 'Sign-ups', data: filtered.map(d => d.ga4.signups), borderColor: '#ffae00', backgroundColor: 'rgba(255,174,0,0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
+    { label: 'Chat Messages', data: filtered.map(d => d.ga4.chat), borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
+    { label: 'First Messages', data: filtered.map(d => d.ga4.first), borderColor: '#34d399', backgroundColor: 'transparent', borderDash: [5, 5], tension: 0.3, pointRadius: 3, borderWidth: 1.5 },
+  ] : [
+    { label: 'Paid Sign-ups', data: filtered.map(d => d.paid.signups), borderColor: '#ffae00', backgroundColor: 'rgba(255,174,0,0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
+    { label: 'Paid Chat Users', data: filtered.map(d => d.paid.chat), borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
+    { label: 'Paid First Chat', data: filtered.map(d => d.paid.first), borderColor: '#34d399', backgroundColor: 'transparent', borderDash: [5, 5], tension: 0.3, pointRadius: 3, borderWidth: 1.5 },
+  ];
+
+  createChart('chartSignups', {
+    type: 'line',
+    data: { labels: dateLabels, datasets: signupDatasets },
+  });
+
+  // Activation chart
+  const actData = filtered.map(d => {
+    const signups = src === 'all' ? d.ga4.signups : d.paid.signups;
+    const firstMsg = src === 'all' ? d.ga4.first : d.paid.first;
+    return signups > 0 ? +((firstMsg / signups) * 100).toFixed(1) : 0;
+  });
+  const actColors = filtered.map(d => {
+    const signups = src === 'all' ? d.ga4.signups : d.paid.signups;
+    const firstMsg = src === 'all' ? d.ga4.first : d.paid.first;
+    const rate = signups > 0 ? (firstMsg / signups) * 100 : 0;
+    return rate >= 40 ? 'rgba(52,211,153,0.6)' : rate >= 25 ? 'rgba(255,174,0,0.5)' : 'rgba(239,68,68,0.4)';
+  });
+
+  createChart('chartActivation', {
+    type: 'bar',
+    data: {
+      labels: dateLabels,
+      datasets: [{ label: 'Activation Rate', data: actData, backgroundColor: actColors, borderRadius: 6 }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { max: 70, ticks: { callback: function(v) { return v + '%'; } } }, x: { grid: { display: false } } },
+    },
+  });
+}
+
+function setEventSource(src) {
+  eventSource = src;
+  renderAll();
+}
+
+// ===== CAMPAIGNS TAB =====
+function renderCampaigns(filtered, totals, camps, dateLabels) {
+  const campData = [
+    { name: 'PMax', data: camps.pmax, color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)' },
+    { name: 'Search', data: camps.search, color: '#ffae00', bgColor: 'rgba(255,174,0,0.1)' },
+    { name: 'YouTube', data: camps.youtube, color: '#ef4444', bgColor: 'rgba(248,113,113,0.1)' },
+    { name: 'Retargeting', data: camps.retargeting, color: '#a78bfa', bgColor: 'rgba(167,139,250,0.1)' },
+  ];
+
+  const totalSpend = camps.pmax.spend + camps.search.spend + camps.youtube.spend + camps.retargeting.spend;
+  const totalConv = camps.pmax.conversions + camps.search.conversions + camps.youtube.conversions + camps.retargeting.conversions;
+  const totalCplExcl = totalConv > 0 ? totalSpend / totalConv : 0;
+  const totalCplIncl = totalConv > 0 ? (totalSpend * 1.18) / totalConv : 0;
+
+  const el = document.getElementById('tab-campaigns');
+  el.innerHTML = `
+    <div class="space-y">
+      <div class="grid-4">
+        ${campData.map(c => {
+          const cpl = c.data.conversions > 0 ? c.data.spend / c.data.conversions : 0;
+          const cplGst = cpl * 1.18;
+          const ctr = c.data.impressions > 0 ? (c.data.clicks / c.data.impressions) * 100 : 0;
+          return `<div class="camp-card" style="background:${c.bgColor};border:1px solid ${c.color}30">
+            <div class="camp-card-name" style="color:${c.color}">${c.name}</div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.8rem">
+              <div class="camp-row"><span class="label">Clicks</span><span class="val">${fmt(c.data.clicks)}</span></div>
+              <div class="camp-row"><span class="label">Impressions</span><span class="val">${fmt(c.data.impressions)}</span></div>
+              <div class="camp-row"><span class="label">CTR</span><span class="val">${pct(ctr)}</span></div>
+              <div class="camp-row"><span class="label">Conversions</span><span class="val" style="color:#34d399">${fmt(Math.round(c.data.conversions))}</span></div>
+              <div class="camp-row"><span class="label">Spend</span><span class="val">${fmtCurrency(c.data.spend)}</span></div>
+              <div class="camp-row"><span class="label">Spend (w/ GST)</span><span class="val" style="color:#f87171">${fmtCurrency(c.data.spend * 1.18)}</span></div>
+              <div class="camp-separator" style="border-color:${c.color}30">
+                <div class="camp-row"><span class="label">CPL (excl. GST)</span><span class="val">${fmtCurrency(cpl)}</span></div>
+                <div class="camp-row" style="margin-top:0.25rem"><span style="color:#ffae00">CPL (incl. 18% GST)</span><span style="font-weight:800;color:#ffae00">${fmtCurrency(cplGst)}</span></div>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Daily Clicks by Campaign</div>
+          <div class="chart-container" style="height:300px"><canvas id="chartClicksByDay"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Campaign Conversion Share</div>
+          <div class="chart-container" style="height:250px"><canvas id="chartConvShare"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">CPL Comparison &mdash; With and Without GST</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>Campaign</th><th class="right">Spend</th><th class="right">GST (18%)</th><th class="right">Total Cost</th><th class="right">Conversions</th><th class="right">CPL (excl. GST)</th><th class="right" style="color:#ffae00;font-weight:700">CPL (incl. GST)</th>
+            </tr></thead>
+            <tbody>
+              ${campData.map(c => {
+                const gst = c.data.spend * GST_RATE;
+                const total = c.data.spend + gst;
+                const cpl = c.data.conversions > 0 ? c.data.spend / c.data.conversions : 0;
+                const cplGst = c.data.conversions > 0 ? total / c.data.conversions : 0;
+                return `<tr>
+                  <td style="font-weight:700;color:${c.color}">${c.name}</td>
+                  <td class="right">${fmtCurrency(c.data.spend)}</td>
+                  <td class="right" style="color:#f87171">${fmtCurrency(gst)}</td>
+                  <td class="right" style="font-weight:600">${fmtCurrency(total)}</td>
+                  <td class="right" style="color:#34d399">${fmt(Math.round(c.data.conversions))}</td>
+                  <td class="right">${fmtCurrency(cpl)}</td>
+                  <td class="right" style="font-weight:700;color:#ffae00">${fmtCurrency(cplGst)}</td>
+                </tr>`;
+              }).join('')}
+              <tr style="border-top:2px solid rgba(255,174,0,0.2)">
+                <td style="font-weight:700;color:#ffae00">TOTAL</td>
+                <td class="right" style="font-weight:700">${fmtCurrency(totalSpend)}</td>
+                <td class="right" style="font-weight:700;color:#f87171">${fmtCurrency(totalSpend * GST_RATE)}</td>
+                <td class="right" style="font-weight:700">${fmtCurrency(totalSpend * 1.18)}</td>
+                <td class="right" style="font-weight:700;color:#34d399">${fmt(Math.round(totalConv))}</td>
+                <td class="right" style="font-weight:700">${fmtCurrency(totalCplExcl)}</td>
+                <td class="right" style="font-weight:800;color:#ffae00">${fmtCurrency(totalCplIncl)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+
+  createChart('chartClicksByDay', {
+    type: 'bar',
+    data: {
+      labels: dateLabels,
+      datasets: [
+        { label: 'PMax', data: filtered.map(d => d.pmax.c), backgroundColor: 'rgba(96,165,250,0.7)', borderRadius: 4 },
+        { label: 'Search', data: filtered.map(d => d.search.c), backgroundColor: 'rgba(255,174,0,0.7)', borderRadius: 4 },
+        { label: 'YouTube', data: filtered.map(d => d.youtube.c), backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 4 },
+        { label: 'Retargeting', data: filtered.map(d => d.retargeting.c), backgroundColor: 'rgba(167,139,250,0.7)', borderRadius: 4 },
+      ],
+    },
+    options: { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true } } }
+  });
+
+  createChart('chartConvShare', {
+    type: 'doughnut',
+    data: {
+      labels: ['PMax', 'Search', 'YouTube', 'Retargeting'],
+      datasets: [{
+        data: [Math.round(camps.pmax.conversions), Math.round(camps.search.conversions), Math.round(camps.youtube.conversions), Math.round(camps.retargeting.conversions)],
+        backgroundColor: ['#60a5fa', '#ffae00', '#ef4444', '#a78bfa'],
+        borderWidth: 0,
+      }],
+    },
+    options: { cutout: '60%' },
+  });
+}
+
+// ===== KEYWORDS TAB =====
+function renderKeywords() {
+  const top12 = keywords.slice(0, 12);
+  const el = document.getElementById('tab-keywords');
+  el.innerHTML = `
+    <div class="space-y">
+      <div class="card">
+        <div class="card-title">Top Keywords by Conversions (Mar 3-15)</div>
+        <div class="chart-container" style="height:400px"><canvas id="chartKeywords"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Keyword Performance Table</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>#</th><th>Keyword</th><th class="right">Impr</th><th class="right">Clicks</th><th class="right">Conv</th><th class="right">CPA</th><th class="right" style="color:#ffae00;font-weight:700">CPA (w/ GST)</th><th class="right">CTR</th><th class="right">Conv Rate</th>
+            </tr></thead>
+            <tbody>
+              ${keywords.map((k, i) => {
+                const cpa = k.conversions > 0 ? k.spend / k.conversions : 0;
+                const cpaGst = cpa * 1.18;
+                const cpaColor = cpaGst < 20 ? '#34d399' : cpaGst < 40 ? '#ffae00' : '#f87171';
+                const crColor = k.convRate >= 50 ? '#34d399' : '#f5f0eb';
+                return `<tr>
+                  <td style="color:rgba(245,240,235,0.4)">${i + 1}</td>
+                  <td style="font-weight:500">${k.keyword}</td>
+                  <td class="right">${fmt(k.impressions)}</td>
+                  <td class="right">${fmt(k.clicks)}</td>
+                  <td class="right" style="font-weight:700;color:#34d399">${fmt(k.conversions)}</td>
+                  <td class="right">${fmtCurrency(cpa)}</td>
+                  <td class="right" style="font-weight:700;color:${cpaColor}">${fmtCurrency(cpaGst)}</td>
+                  <td class="right">${pct(k.ctr)}</td>
+                  <td class="right" style="color:${crColor}">${pct(k.convRate)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="note">* Conv rates above 100% are due to Google Ads Data-Driven Attribution (DDA). CPL with GST = (Spend \u00D7 1.18) / Conversions.</div>
+      </div>
+    </div>
+  `;
+
+  createChart('chartKeywords', {
+    type: 'bar',
+    data: {
+      labels: top12.map(k => k.keyword),
+      datasets: [{
+        label: 'Conversions',
+        data: top12.map(k => k.conversions),
+        backgroundColor: top12.map((_, i) => i === 0 ? '#ffae00' : 'rgba(96,165,250,0.6)'),
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true }, y: { ticks: { font: { size: 11 }, padding: 4 } } },
+    },
+  });
+}
+
+// ===== CITIES TAB =====
+function renderCities() {
+  const cityColors = ['#ffae00', '#f5a623', '#eb9e46', '#e09669', '#d68e8c', '#cc86af', '#c27ed2', '#b876f5', '#ae6ef5', '#a466f5', '#9a5ef5', '#9056f5'];
+
+  const el = document.getElementById('tab-cities');
+  el.innerHTML = `
+    <div class="space-y">
+      <div class="card">
+        <div class="card-title">Top Cities by Conversions</div>
+        <div class="chart-container" style="height:350px"><canvas id="chartCities"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">City Performance Detail</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr>
+              <th>City</th><th class="right">Impressions</th><th class="right">Clicks</th><th class="right">Conversions</th><th class="right">Spend</th><th class="right">CPL</th><th class="right" style="color:#ffae00;font-weight:700">CPL (w/ GST)</th><th class="right">Conv Rate</th>
+            </tr></thead>
+            <tbody>
+              ${cities.map(c => {
+                const cpl = c.conversions > 0 ? c.spend / c.conversions : 0;
+                const cplGst = cpl * 1.18;
+                const cvr = c.clicks > 0 ? (c.conversions / c.clicks) * 100 : 0;
+                const cplColor = cplGst < 15 ? '#34d399' : cplGst < 25 ? '#ffae00' : '#f87171';
+                return `<tr>
+                  <td style="font-weight:700">${c.city}</td>
+                  <td class="right">${fmt(c.impressions)}</td>
+                  <td class="right">${fmt(c.clicks)}</td>
+                  <td class="right" style="font-weight:700;color:#34d399">${fmt(c.conversions)}</td>
+                  <td class="right">${fmtCurrency(c.spend)}</td>
+                  <td class="right">${fmtCurrency(cpl)}</td>
+                  <td class="right" style="font-weight:700;color:${cplColor}">${fmtCurrency(cplGst)}</td>
+                  <td class="right">${pct(cvr)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+
+  createChart('chartCities', {
+    type: 'bar',
+    data: {
+      labels: cities.map(c => c.city),
+      datasets: [{
+        label: 'Conversions',
+        data: cities.map(c => c.conversions),
+        backgroundColor: cities.map((_, i) => cityColors[i] || '#9056f5'),
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true }, y: { ticks: { font: { size: 11 } } } },
+    },
+  });
+}
+
+// ===== INIT =====
+document.getElementById('startDate').addEventListener('change', renderAll);
+document.getElementById('endDate').addEventListener('change', renderAll);
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Website Development | Kishore Portfolio</title>
+    <style>
+        /* Internal Styles for immediate viewing */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --accent: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header / Hero */
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Styling */
+        .section-title {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .project-links a {
+            text-decoration: none;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+
+        .project-links a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .project-image-placeholder {
+            width: 100%;
+            height: 250px;
+            background-color: #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .project-description {
+            margin-bottom: 1.5rem;
+            color: #475569;
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-tag {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .features-list {
+            list-style-type: none;
+        }
+
+        .features-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Back Button */
+        .back-nav {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 1px solid var(--primary-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .back-nav a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .container { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Full Website Development</h1>
+        <p>Personal Project | Healthcare & Beauty Industry</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="back-nav">
+            <a href="index.html">← Back to Portfolio</a>
+        </div>
+
+        <!-- Project 1: Barun's Dental -->
+        <section>
+            <h2 class="section-title">Barun's Dental</h2>
+            
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">Dental Clinic Website</div>
+                    <div class="project-links">
+                        <a href="https://www.barunsdental.com/" target="_blank">Visit Live Site ↗</a>
+                    </div>
+                </div>
+
+                <!-- Placeholder for Screenshot -->
+                <div class="project-image-placeholder" style="background-image: 
+url('https://via.placeholder.com/800x400/e0e0e0/888888?text=Baruns+Dental+Mockup');">
+                    <!-- Replace the background-image url above with your actual screenshot 
+path -->
+                </div>
+
+                <p class="project-description">
+                    Developed a professional, user-friendly website for Barun's Dental. The 
+goal was to create a digital presence that reflects trust and hygiene while providing easy 
+access to services and appointment booking.
+                </p>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Wordpress</span>
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">Responsive Design</span>
+                </div>
+
+                <h3>Key Features:</h3>
+                <ul class="features-list">
+                    <li>Service showcase with detailed descriptions.</li>
+                    <li>Doctor/Team profile section.</li>
+                    <li>Appointment booking inquiry forms.</li>
+                    <li>Mobile-responsive layout for patients on the go.</li>
+                    <li>Fast loading speeds for optimal user experience.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Project 2: Velanceramics -->
+        <section>
+            <h2 class="section-title">Velanceramics</h2>
+            
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">Tiles & Sanitaryware Brand</div>
+                    <div class="project-links">
+                        <a href="https://velanceramics.com/" target="_blank">Visit Live Site ↗</a>
+                    </div>
+                </div>
+
+                <!-- Placeholder for Screenshot -->
+                <div class="project-image-placeholder" style="background-image: 
+url('https://via.placeholder.com/800x400/f0f0f0/888888?text=Velanceramics+Mockup');">
+                    <!-- Replace the background-image url above with your actual screenshot 
+path -->
+                </div>
+
+                <p class="project-description">
+                    Designed and developed a visually stunning website for Velanceramics. The 
+focus was on visual storytelling, product showcasing, and creating an elegant brand aesthetic 
+that appeals to the beauty industry.
+                </p>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Wordpress</span>
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">UI/UX Design</span>
+                </div>
+
+                <h3>Key Features:</h3>
+                <ul class="features-list">
+                    <li>Elegant product gallery and showcase.</li>
+                    <li>Brand story and "About Us" section.</li>
+                    <li>Integration of social media feeds.</li>
+                    <li>Smooth animations and transitions.</li>
+                    <li>Contact forms for product inquiries.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Project 3: Rockz Digi Solutions -->
+        <section>
+            <h2 class="section-title">Rockz Digi Solutions</h2>
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">Digital Solutions Agency</div>
+                    <div class="project-links">
+                        <a href="https://www.rockzdigisolutions.com/" target="_blank">Visit Live Site ↗</a>
+                    </div>
+                </div>
+                <!-- Placeholder for Screenshot -->
+                <div class="project-image-placeholder" style="background-image: 
+url('https://via.placeholder.com/800x400/cccccc/000000?text=Rockz+Digi+Solutions+Mockup');">
+                    <!-- Replace the background-image url above with your actual screenshot 
+path -->
+                </div>
+                <p class="project-description">Brief description of the Rockz Digi Solutions project, including its goals and impact.</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">UI/UX Design</span>
+                </div>
+                <h3>Key Features:</h3>
+                <ul class="features-list">
+                    <li>Feature 1 description.</li>
+                    <li>Feature 2 description.</li>
+                    <!-- Add more features as needed -->
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

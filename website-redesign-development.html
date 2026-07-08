@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Website Development | Kishore Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --bg-card-hover: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --accent: #FFD93D;
+            --accent-blue: #4A90D9;
+            --border-color: #222222;
+            --card-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Back Navigation */
+        .back-nav {
+            padding: 1.5rem 2rem;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .back-nav a:hover {
+            color: var(--accent);
+        }
+
+        .back-nav a i {
+            font-size: 0.85rem;
+        }
+
+        /* Header / Hero */
+        header {
+            padding: 3rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: #333;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.05);
+        }
+
+        .project-card:hover .view-link {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Image Area */
+        .project-image-wrap {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+
+        .project-image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .project-image-placeholder-icon {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Overlay with View Link */
+        .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding: 1.25rem;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .project-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .view-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent);
+            color: #0a0a0a;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .view-link:hover {
+            background: #ffe566;
+        }
+
+        /* Card Content */
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-category {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        .project-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Tech Tags */
+        .tech-stack {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            padding: 0.3rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s;
+        }
+
+        .project-card:hover .tech-tag {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            header h1 { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 600px) {
+            header { padding: 2rem 1.5rem 3rem; }
+            header h1 { font-size: 1.8rem; }
+            .container { padding: 0 1rem 3rem; }
+            .project-image-wrap { height: 220px; }
+            .project-content { padding: 1.25rem; }
+            .project-title { font-size: 1.15rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="back-nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+    </div>
+
+    <header>
+        <h1>Website Redesign & Development</h1>
+        <!-- <p>Personal Project | Healthcare & Beauty Industry</p> -->
+    </header>
+
+    <div class="container">
+        <div class="projects-grid">
+
+            <!-- Project: Spark Studios -->
+            <div class="project-card">
+                <div class="project-image-wrap">
+                    <div class="project-image" style="background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-palette project-image-placeholder-icon"></i>
+                    </div>
+                    <div class="image-overlay">
+                        <a href="https://www.sparkstudios.in/services/branding-agency-chennai.html" target="_blank" class="view-link">
+                            Visit Site <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-category">Branding Agency</div>
+                    <div class="project-title">Spark Studios</div>
+                    <p class="project-description">
+                        Developed the service page for Spark Studios, a leading branding agency in Chennai. The page highlights their branding services, portfolio, and creative expertise with a clean, professional design.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">WordPress</span>
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Responsive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project: Cocotown -->
+            <div class="project-card">
+                <div class="project-image-wrap">
+                    <div class="project-image" style="background: linear-gradient(135deg, #065f46 0%, #10b981 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-seedling project-image-placeholder-icon"></i>
+                    </div>
+                    <div class="image-overlay">
+                        <a href="https://www.sparkstudios.in/case-study/cocotown.html" target="_blank" class="view-link">
+                            View Case Study <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-category">Food Brand</div>
+                    <div class="project-title">Cocotown</div>
+                    <p class="project-description">
+                        Designed and developed a case study page for Cocotown, a coconut-based food brand. The page showcases the brand's journey, visual identity, and marketing strategy with engaging storytelling.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">WordPress</span>
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">UI/UX</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project: Brownie & Blondie -->
+            <div class="project-card">
+                <div class="project-image-wrap">
+                    <div class="project-image" style="background: linear-gradient(135deg, #92400e 0%, #f59e0b 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-cookie-bite project-image-placeholder-icon"></i>
+                    </div>
+                    <div class="image-overlay">
+                        <a href="https://www.sparkstudios.in/case-study/Brownie&Blondie.html" target="_blank" class="view-link">
+                            View Case Study <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-category">Artisan Bakery</div>
+                    <div class="project-title">Brownie & Blondie</div>
+                    <p class="project-description">
+                        Created a case study page for Brownie & Blondie, an artisan bakery brand. The page captures the brand's warm, indulgent personality through rich visuals and compelling storytelling.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">WordPress</span>
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">UI/UX</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project: Jeevana Foods -->
+            <div class="project-card">
+                <div class="project-image-wrap">
+                    <div class="project-image" style="background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-utensils project-image-placeholder-icon"></i>
+                    </div>
+                    <div class="image-overlay">
+                        <a href="https://www.sparkstudios.in/case-study/jeevana-foods.html" target="_blank" class="view-link">
+                            View Case Study <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-category">Food & FMCG</div>
+                    <div class="project-title">Jeevana Foods</div>
+                    <p class="project-description">
+                        Developed a case study page for Jeevana Foods, a food and FMCG brand. The page highlights the brand's market presence, product range, and digital marketing strategy.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">WordPress</span>
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Responsive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project: Torah Overseas -->
+            <div class="project-card">
+                <div class="project-image-wrap">
+                    <div class="project-image" style="background: linear-gradient(135deg, #1e3a5f 0%, #0ea5e9 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-globe project-image-placeholder-icon"></i>
+                    </div>
+                    <div class="image-overlay">
+                        <a href="https://www.sparkstudios.in/case-study/torah-overseas.html" target="_blank" class="view-link">
+                            View Case Study <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-category">International Trade</div>
+                    <div class="project-title">Torah Overseas</div>
+                    <p class="project-description">
+                        Designed a case study page for Torah Overseas, an international trade and export brand. The page presents the brand's global reach, trade expertise, and business impact through a professional, corporate design.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">WordPress</span>
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Responsive</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

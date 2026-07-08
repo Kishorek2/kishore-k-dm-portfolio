@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comfort Keepers — Google Ads Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #060d1a;
+    color: #e8f0fe;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #020b18 0%, #061428 50%, #020b18 100%);
+    border-bottom: 1px solid rgba(77,166,255,0.15);
+    padding: 1.5rem 2rem;
+  }
+  .header-inner {
+    max-width: 1500px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .brand-logo { display: flex; align-items: center; gap: 0.75rem; }
+  .brand-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #4da6ff, #0066cc);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 900; color: #fff;
+  }
+  .brand-title { font-size: 1.4rem; font-weight: 800; color: #4da6ff; }
+  .brand-sub { font-size: 0.75rem; margin-top: 0.2rem; color: rgba(232,240,254,0.45); letter-spacing: 0.02em; }
+  .header-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+  .period-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 0.35rem 0.75rem;
+    background: rgba(77,166,255,0.1); border: 1px solid rgba(77,166,255,0.2);
+    border-radius: 0.4rem; color: #4da6ff; letter-spacing: 0.03em;
+  }
+  .filter-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+  .filter-label { font-size: 0.72rem; color: rgba(232,240,254,0.4); }
+  select {
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    background: rgba(77,166,255,0.07);
+    border: 1px solid rgba(77,166,255,0.2);
+    color: #4da6ff;
+    outline: none;
+    cursor: pointer;
+  }
+  select option { background: #061428; color: #e8f0fe; }
+  .tabs-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+  }
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(77,166,255,0.1);
+  }
+  .tab-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: rgba(232,240,254,0.45);
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn.active {
+    background: rgba(77,166,255,0.1);
+    border-bottom: 2px solid #4da6ff;
+    color: #4da6ff;
+  }
+  .tab-btn:hover { color: #4da6ff; }
+  .content {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .space-y > * + * { margin-top: 1.5rem; }
+  .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .grid-1 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .col-span-2 { grid-column: span 2; }
+  .kpi {
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: border-color 0.2s;
+  }
+  .kpi:hover { border-color: rgba(77,166,255,0.2); }
+  .kpi-label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.375rem;
+    font-weight: 600;
+    color: rgba(232,240,254,0.38);
+  }
+  .kpi-value { font-size: 1.5rem; font-weight: 800; color: #fff; }
+  .kpi-value.highlight { color: #4da6ff; }
+  .kpi-value.green { color: #34d399; }
+  .kpi-value.orange { color: #fb923c; }
+  .kpi-sub {
+    font-size: 0.66rem;
+    margin-top: 0.25rem;
+    color: rgba(232,240,254,0.38);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .kpi-sub .good { color: #34d399; }
+  .kpi-sub .warn { color: #fb923c; }
+  .card {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+    color: rgba(232,240,254,0.45);
+  }
+  .compare-panel {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(77,166,255,0.06), rgba(77,166,255,0.02));
+    border: 1px solid rgba(77,166,255,0.12);
+  }
+  .compare-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; color: #4da6ff; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .compare-col { }
+  .compare-col-title {
+    font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;
+    padding: 0.35rem 0.65rem; border-radius: 0.4rem; display: inline-block;
+  }
+  .compare-col-title.search { background: rgba(77,166,255,0.15); color: #4da6ff; }
+  .compare-col-title.pmax { background: rgba(52,211,153,0.15); color: #34d399; }
+  .compare-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-size: 0.82rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row .clabel { color: rgba(232,240,254,0.45); }
+  .compare-row .cval { font-weight: 700; }
+  .chart-container { position: relative; width: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  th {
+    text-align: left;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(232,240,254,0.38);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  th.right, td.right { text-align: right; }
+  td { padding: 0.625rem 0.75rem; color: #e8f0fe; vertical-align: middle; }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.035); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(77,166,255,0.04); }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .badge-enabled { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+  .badge-paused { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.2); }
+  .badge-search { background: rgba(77,166,255,0.15); color: #4da6ff; border: 1px solid rgba(77,166,255,0.2); }
+  .badge-pmax { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+  .loc-card {
+    border-radius: 0.75rem;
+    padding: 1.1rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: default;
+  }
+  .loc-card:hover { border-color: rgba(77,166,255,0.25); transform: translateY(-1px); }
+  .loc-card-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.6rem; color: #e8f0fe; }
+  .loc-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 0.2rem 0; }
+  .loc-row .ll { color: rgba(232,240,254,0.45); }
+  .loc-row .lv { font-weight: 700; }
+  .loc-divider { border-top: 1px solid rgba(255,255,255,0.06); margin: 0.5rem 0; }
+  .loc-conv { font-size: 1.3rem; font-weight: 800; color: #34d399; }
+  .loc-cpa { font-size: 0.7rem; color: rgba(232,240,254,0.45); margin-top: 0.1rem; }
+  .metric-bar-wrap { margin-top: 0.35rem; }
+  .metric-bar-bg { background: rgba(255,255,255,0.06); border-radius: 9999px; height: 4px; overflow: hidden; }
+  .metric-bar-fill { height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #4da6ff, #0066cc); transition: width 0.5s ease; }
+  .overflow-x { overflow-x: auto; }
+  .score-chip {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+  .score-high { background: rgba(52,211,153,0.15); color: #34d399; }
+  .score-mid { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .score-low { background: rgba(248,113,113,0.15); color: #f87171; }
+  .score-na { background: rgba(255,255,255,0.05); color: rgba(232,240,254,0.35); }
+  .summary-bar {
+    display: flex; gap: 0.75rem; padding: 0.75rem 1rem;
+    background: rgba(77,166,255,0.05); border-radius: 0.6rem;
+    border: 1px solid rgba(77,166,255,0.1); flex-wrap: wrap;
+  }
+  .summary-item { display: flex; flex-direction: column; }
+  .summary-item .sl { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(232,240,254,0.38); font-weight: 600; }
+  .summary-item .sv { font-size: 1rem; font-weight: 800; color: #4da6ff; }
+  .summary-sep { width: 1px; background: rgba(255,255,255,0.07); align-self: stretch; }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.68rem;
+    color: rgba(232,240,254,0.22);
+    border-top: 1px solid rgba(77,166,255,0.06);
+  }
+  @media (max-width: 1100px) {
+    .grid-6 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .header { padding: 1rem; }
+    .header-inner { flex-direction: column; }
+    .header-meta { align-items: flex-start; }
+    .content { padding: 1rem; }
+    .tabs-container { padding: 0.5rem 1rem 0; }
+    .grid-6 { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand-logo">
+      <div class="brand-icon">CK</div>
+      <div>
+        <div class="brand-title">Comfort Keepers</div>
+        <div class="brand-sub">Google Ads Performance Dashboard &mdash; Interactive</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="period-badge">Nov 27, 2025 &ndash; Apr 6, 2026</div>
+      <div class="filter-row">
+        <span class="filter-label">Filter by Location:</span>
+        <select id="locationFilter" onchange="renderAll()">
+          <option value="all">All Locations</option>
+          <option value="Greensboro">Greensboro</option>
+          <option value="Snyder">Snyder</option>
+          <option value="Lexington">Lexington</option>
+          <option value="Fairfax">Fairfax</option>
+          <option value="Cumberland">Cumberland</option>
+          <option value="Herndon">Herndon</option>
+          <option value="Virginia Beach">Virginia Beach</option>
+          <option value="Ohio">Ohio</option>
+          <option value="Dunkirk">Dunkirk</option>
+          <option value="Winchester">Winchester</option>
+          <option value="Alexandria">Alexandria</option>
+          <option value="Sterling">Sterling</option>
+        </select>
+        <select id="typeFilter" onchange="renderAll()">
+          <option value="all">All Types</option>
+          <option value="Search">Search</option>
+          <option value="Performance Max">Performance Max</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-container">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="content">
+  <div id="tab-overview" class="tab-content active"></div>
+  <div id="tab-campaigns" class="tab-content"></div>
+  <div id="tab-locations" class="tab-content"></div>
+  <div id="tab-types" class="tab-content"></div>
+</div>
+
+<footer>
+  Comfort Keepers Google Ads Dashboard &middot; All Accounts &middot; Nov 27, 2025 &ndash; Apr 6, 2026 &middot; Currency: USD
+</footer>
+
+<script>
+// ===== DATA =====
+const campaigns = [
+  { name:'CK - Search - Greensboro - Feb - 2026',     status:'Paused',  location:'Greensboro',    account:'Comfort Keepers - Greensboro',   type:'Search',          impressions:5690,   ctr:4.60,  cost:213.21,  interactions:262,  clicks:262,  convRate:1.15,  conversions:3.00,  avgCpc:0.81, costPerConv:71.07,  optScore:null,  budget:10.00 },
+  { name:'CK - GMB - Greensboro - Feb- 2026',         status:'Enabled', location:'Greensboro',    account:'Comfort Keepers - Greensboro',   type:'Performance Max', impressions:197736, ctr:0.10,  cost:276.84,  interactions:614,  clicks:196,  convRate:3.09,  conversions:19.00, avgCpc:1.41, costPerConv:14.57,  optScore:92.76, budget:10.00 },
+  { name:'CK - Search - Greensboro - Mar 2026',       status:'Enabled', location:'Greensboro',    account:'Comfort Keepers - Greensboro',   type:'Search',          impressions:2641,   ctr:8.90,  cost:311.52,  interactions:235,  clicks:235,  convRate:1.28,  conversions:3.00,  avgCpc:1.33, costPerConv:103.84, optScore:75.65, budget:16.00 },
+  { name:'CK - Search - Synder - Feb - 2026',         status:'Paused',  location:'Snyder',        account:'Comfort Keepers - Snyder',       type:'Search',          impressions:523,    ctr:8.22,  cost:186.69,  interactions:43,   clicks:43,   convRate:2.33,  conversions:1.00,  avgCpc:4.34, costPerConv:186.69, optScore:null,  budget:6.00  },
+  { name:'CK - GMB - Synder - Feb - 2026',            status:'Enabled', location:'Snyder',        account:'Comfort Keepers - Snyder',       type:'Performance Max', impressions:254107, ctr:0.04,  cost:204.77,  interactions:2959, clicks:113,  convRate:0.57,  conversions:17.00, avgCpc:1.81, costPerConv:12.05,  optScore:90.90, budget:6.00  },
+  { name:'CK - GMB - Lexington - Feb - 2026',         status:'Enabled', location:'Lexington',     account:'Comfort Keepers - Lexington',    type:'Performance Max', impressions:404059, ctr:0.06,  cost:297.75,  interactions:1327, clicks:241,  convRate:0.83,  conversions:11.00, avgCpc:1.24, costPerConv:27.07,  optScore:92.76, budget:10.00 },
+  { name:'CK - Search - Snyder - Mar 2026',           status:'Enabled', location:'Snyder',        account:'Comfort Keepers - Snyder',       type:'Search',          impressions:256,    ctr:8.59,  cost:138.55,  interactions:22,   clicks:22,   convRate:0.00,  conversions:0.00,  avgCpc:6.30, costPerConv:0.00,   optScore:87.81, budget:8.00  },
+  { name:'CK - Search - Lexington - Feb - 2026',      status:'Paused',  location:'Lexington',     account:'Comfort Keepers - Lexington',    type:'Search',          impressions:3434,   ctr:6.38,  cost:221.89,  interactions:219,  clicks:219,  convRate:3.88,  conversions:8.50,  avgCpc:1.01, costPerConv:26.11,  optScore:null,  budget:10.00 },
+  { name:'CK - Search - Lexington - Mar 2026',        status:'Enabled', location:'Lexington',     account:'Comfort Keepers - Lexington',    type:'Search',          impressions:15494,  ctr:1.44,  cost:302.75,  interactions:223,  clicks:223,  convRate:0.90,  conversions:2.00,  avgCpc:1.36, costPerConv:151.38, optScore:70.50, budget:16.00 },
+  { name:'CK - Search - Fairfax - Jan -2026',         status:'Enabled', location:'Fairfax',       account:'Comfort Keepers - Fairfax',      type:'Search',          impressions:16157,  ctr:7.43,  cost:998.40,  interactions:1201, clicks:1201, convRate:2.25,  conversions:27.00, avgCpc:0.83, costPerConv:36.98,  optScore:65.53, budget:15.63 },
+  { name:'CK - GMB - Fairfax - Jan - 2026',           status:'Enabled', location:'Fairfax',       account:'Comfort Keepers - Fairfax',      type:'Performance Max', impressions:265702, ctr:0.13,  cost:451.68,  interactions:878,  clicks:349,  convRate:5.35,  conversions:47.00, avgCpc:1.29, costPerConv:9.61,   optScore:82.84, budget:5.00  },
+  { name:'CK - Search - Cumberland - April - 2026',   status:'Enabled', location:'Cumberland',    account:'Comfort Keepers - Cumberland',   type:'Search',          impressions:211,    ctr:9.48,  cost:50.62,   interactions:20,   clicks:20,   convRate:0.00,  conversions:0.00,  avgCpc:2.53, costPerConv:0.00,   optScore:54.29, budget:10.00 },
+  { name:'CK - Herndon - Search - Jobs - April - 2026',status:'Enabled',location:'Herndon',       account:'Comfort Keepers - Herndon',      type:'Search',          impressions:81,     ctr:13.58, cost:13.44,   interactions:11,   clicks:11,   convRate:72.73, conversions:8.00,  avgCpc:1.22, costPerConv:1.68,   optScore:74.91, budget:3.00  },
+  { name:'CK - Search - Herndon - Jan - 2026',        status:'Enabled', location:'Herndon',       account:'Comfort Keepers - Herndon',      type:'Search',          impressions:31632,  ctr:3.25,  cost:1020.01, interactions:1029, clicks:1029, convRate:1.75,  conversions:18.00, avgCpc:0.99, costPerConv:56.67,  optScore:66.53, budget:15.63 },
+  { name:'CK - GMB - Herndon - Jan -2026',            status:'Enabled', location:'Herndon',       account:'Comfort Keepers - Herndon',      type:'Performance Max', impressions:217037, ctr:0.13,  cost:389.93,  interactions:1449, clicks:287,  convRate:0.90,  conversions:13.00, avgCpc:1.36, costPerConv:29.99,  optScore:94.97, budget:5.00  },
+  { name:'CK - GMB - Cumberland - Jan -2026',         status:'Enabled', location:'Cumberland',    account:'Comfort Keepers - Cumberland',   type:'Performance Max', impressions:6157,   ctr:1.93,  cost:169.21,  interactions:946,  clicks:119,  convRate:0.74,  conversions:7.00,  avgCpc:1.42, costPerConv:24.17,  optScore:93.11, budget:5.00  },
+  { name:'CK - Search - Winchester - Jan - 2026',     status:'Enabled', location:'Winchester',    account:'Comfort Keepers - Winchester',   type:'Search',          impressions:10442,  ctr:7.56,  cost:1018.44, interactions:789,  clicks:789,  convRate:2.03,  conversions:16.00, avgCpc:1.29, costPerConv:63.65,  optScore:84.14, budget:15.63 },
+  { name:'CK - Search - Alexandria - Jan - 2026',     status:'Enabled', location:'Alexandria',    account:'Comfort Keepers - Alexandria',   type:'Search',          impressions:9315,   ctr:11.12, cost:1082.95, interactions:1036, clicks:1036, convRate:2.03,  conversions:21.00, avgCpc:1.05, costPerConv:51.57,  optScore:66.42, budget:15.63 },
+  { name:'CK - Search - Virginia Beach - Jan -2026',  status:'Enabled', location:'Virginia Beach',account:'Comfort Keepers - Virginia Beach',type:'Search',          impressions:19896,  ctr:6.22,  cost:1099.78, interactions:1237, clicks:1237, convRate:2.02,  conversions:25.00, avgCpc:0.89, costPerConv:43.99,  optScore:71.82, budget:20.63 },
+  { name:'CK - VB - Search - Jobs - Feb - 2026',      status:'Enabled', location:'Virginia Beach',account:'Comfort Keepers - Virginia Beach',type:'Search',          impressions:1321,   ctr:12.72, cost:144.41,  interactions:168,  clicks:168,  convRate:23.21, conversions:39.00, avgCpc:0.86, costPerConv:3.70,   optScore:62.29, budget:3.00  },
+  { name:'CK - GMB - Virginia Beach - Jan -2026',     status:'Paused',  location:'Virginia Beach',account:'Comfort Keepers - Virginia Beach',type:'Performance Max', impressions:222980, ctr:0.06,  cost:161.43,  interactions:247,  clicks:130,  convRate:15.38, conversions:38.00, avgCpc:1.24, costPerConv:4.25,   optScore:null,  budget:5.00  },
+  { name:'CK – GMB - Ohio - Dec 2025',                status:'Paused',  location:'Ohio',          account:'Comfort Keepers - Ohio',         type:'Performance Max', impressions:514169, ctr:0.04,  cost:386.25,  interactions:934,  clicks:222,  convRate:0.96,  conversions:9.00,  avgCpc:1.74, costPerConv:42.92,  optScore:null,  budget:5.00  },
+  { name:'CK – GMB – Dunkirk - Dec 2025',             status:'Enabled', location:'Dunkirk',       account:'Comfort Keepers - Dunkirk',      type:'Performance Max', impressions:3954,   ctr:4.00,  cost:261.23,  interactions:177,  clicks:158,  convRate:3.39,  conversions:6.00,  avgCpc:1.65, costPerConv:43.54,  optScore:99.84, budget:5.00  },
+  { name:'CK - Search - Dunkirk - April - 2026',      status:'Enabled', location:'Dunkirk',       account:'Comfort Keepers - Dunkirk',      type:'Search',          impressions:178,    ctr:1.12,  cost:1.39,    interactions:2,    clicks:2,    convRate:0.00,  conversions:0.00,  avgCpc:0.69, costPerConv:0.00,   optScore:73.28, budget:10.00 },
+  { name:'CK – Search – Ohio – Dec 2025',             status:'Enabled', location:'Ohio',          account:'Comfort Keepers - Ohio',         type:'Search',          impressions:5644,   ctr:10.79, cost:1248.96, interactions:609,  clicks:609,  convRate:4.43,  conversions:27.00, avgCpc:2.05, costPerConv:46.26,  optScore:82.26, budget:17.50 },
+  { name:'CK - Search - Sterling - Jan - 2026',       status:'Enabled', location:'Sterling',      account:'Comfort Keeper - Sterling',      type:'Search',          impressions:36308,  ctr:2.51,  cost:1012.34, interactions:910,  clicks:910,  convRate:1.65,  conversions:15.06, avgCpc:1.11, costPerConv:67.23,  optScore:68.82, budget:15.63 },
+  { name:'CK - Sterling - Search - Jobs - April - 2026',status:'Enabled',location:'Sterling',     account:'Comfort Keeper - Sterling',      type:'Search',          impressions:81,     ctr:8.64,  cost:13.70,   interactions:7,    clicks:7,    convRate:57.14, conversions:4.00,  avgCpc:1.96, costPerConv:3.43,   optScore:74.91, budget:3.00  },
+  { name:'CK - GMB - Sterling - Jan - 2026',          status:'Enabled', location:'Sterling',      account:'Comfort Keeper - Sterling',      type:'Performance Max', impressions:195184, ctr:0.23,  cost:419.97,  interactions:1291, clicks:453,  convRate:1.94,  conversions:25.00, avgCpc:0.93, costPerConv:16.80,  optScore:93.27, budget:5.00  },
+];
+
+// ===== UTILITIES =====
+function fmt(n) { return n.toLocaleString('en-US'); }
+function fmtUSD(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function pct(n, d=2) { return n.toFixed(d) + '%'; }
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function getFiltered() {
+  const loc = document.getElementById('locationFilter').value;
+  const type = document.getElementById('typeFilter').value;
+  return campaigns.filter(c => {
+    if (loc !== 'all' && c.location !== loc) return false;
+    if (type !== 'all' && c.type !== type) return false;
+    return true;
+  });
+}
+
+function calcTotals(data) {
+  const totalCost = data.reduce((s, c) => s + c.cost, 0);
+  const totalImpr = data.reduce((s, c) => s + c.impressions, 0);
+  const totalClicks = data.reduce((s, c) => s + c.clicks, 0);
+  const totalInteractions = data.reduce((s, c) => s + c.interactions, 0);
+  const totalConv = data.reduce((s, c) => s + c.conversions, 0);
+  const avgCpc = totalClicks > 0 ? totalCost / totalClicks : 0;
+  const ctr = totalImpr > 0 ? (totalInteractions / totalImpr) * 100 : 0;
+  const convRate = totalClicks > 0 ? (totalConv / totalClicks) * 100 : 0;
+  const costPerConv = totalConv > 0 ? totalCost / totalConv : 0;
+  return { totalCost, totalImpr, totalClicks, totalInteractions, totalConv, avgCpc, ctr, convRate, costPerConv };
+}
+
+function getLocationData(data) {
+  const map = {};
+  data.forEach(c => {
+    if (!map[c.location]) map[c.location] = { location: c.location, cost: 0, impressions: 0, clicks: 0, interactions: 0, conversions: 0, campaigns: 0 };
+    map[c.location].cost += c.cost;
+    map[c.location].impressions += c.impressions;
+    map[c.location].clicks += c.clicks;
+    map[c.location].interactions += c.interactions;
+    map[c.location].conversions += c.conversions;
+    map[c.location].campaigns += 1;
+  });
+  return Object.values(map).sort((a, b) => b.conversions - a.conversions);
+}
+
+function getTypeData(data) {
+  const search = data.filter(c => c.type === 'Search');
+  const pmax = data.filter(c => c.type === 'Performance Max');
+  return { search: calcTotals(search), pmax: calcTotals(pmax), searchCount: search.length, pmaxCount: pmax.length };
+}
+
+// ===== CHART HELPERS =====
+let charts = [];
+function destroyCharts() { charts.forEach(c => c.destroy()); charts = []; }
+
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: 'rgba(232,240,254,0.55)', font: { family: 'Inter', size: 11 }, boxWidth: 12, padding: 16 } },
+    tooltip: { backgroundColor: '#061428', borderColor: 'rgba(77,166,255,0.2)', borderWidth: 1, titleColor: '#e8f0fe', bodyColor: 'rgba(232,240,254,0.7)', padding: 10 }
+  },
+  scales: {
+    x: { ticks: { color: 'rgba(232,240,254,0.38)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    y: { ticks: { color: 'rgba(232,240,254,0.38)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
+  }
+};
+
+function deepMerge(target, source) {
+  const out = Object.assign({}, target);
+  for (const k of Object.keys(source)) {
+    if (source[k] && typeof source[k] === 'object' && !Array.isArray(source[k]) && target[k] && typeof target[k] === 'object' && !Array.isArray(target[k])) {
+      out[k] = deepMerge(target[k], source[k]);
+    } else { out[k] = source[k]; }
+  }
+  return out;
+}
+
+function createChart(id, config) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return null;
+  const base = config.type === 'doughnut' || config.type === 'pie'
+    ? { responsive: true, maintainAspectRatio: false, plugins: CHART_DEFAULTS.plugins }
+    : CHART_DEFAULTS;
+  config.options = deepMerge(base, config.options || {});
+  const ch = new Chart(ctx, config);
+  charts.push(ch);
+  return ch;
+}
+
+// ===== TABS =====
+let activeTab = 'overview';
+const tabDefs = [
+  { key: 'overview',   label: '&#9632; Overview' },
+  { key: 'campaigns',  label: 'Campaigns' },
+  { key: 'locations',  label: 'Locations' },
+  { key: 'types',      label: 'Campaign Types' },
+];
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = tabDefs.map(t =>
+    `<button class="tab-btn ${activeTab === t.key ? 'active' : ''}" onclick="switchTab('${t.key}')">${t.label}</button>`
+  ).join('');
+  tabDefs.forEach(t => {
+    const el = document.getElementById('tab-' + t.key);
+    if (el) el.classList.toggle('active', activeTab === t.key);
+  });
+}
+
+function switchTab(key) { activeTab = key; renderAll(); }
+
+// ===== RENDER OVERVIEW =====
+function renderOverview(data, totals, locData, typeData) {
+  const el = document.getElementById('tab-overview');
+  const enabled = data.filter(c => c.status === 'Enabled').length;
+  const paused = data.filter(c => c.status === 'Paused').length;
+
+  el.innerHTML = `
+  <div class="space-y">
+    <div class="summary-bar">
+      <div class="summary-item"><span class="sl">Total Campaigns</span><span class="sv">${data.length}</span></div>
+      <div class="summary-sep"></div>
+      <div class="summary-item"><span class="sl">Active</span><span class="sv" style="color:#34d399">${enabled}</span></div>
+      <div class="summary-sep"></div>
+      <div class="summary-item"><span class="sl">Paused</span><span class="sv" style="color:#fb923c">${paused}</span></div>
+      <div class="summary-sep"></div>
+      <div class="summary-item"><span class="sl">Locations</span><span class="sv">${locData.length}</span></div>
+      <div class="summary-sep"></div>
+      <div class="summary-item"><span class="sl">Report Period</span><span class="sv" style="font-size:0.8rem;color:rgba(232,240,254,0.7)">Nov 27, 2025 – Apr 6, 2026</span></div>
+    </div>
+
+    <div class="grid-6">
+      <div class="kpi">
+        <div class="kpi-label">Total Spend</div>
+        <div class="kpi-value highlight">${fmtUSD(totals.totalCost)}</div>
+        <div class="kpi-sub">Across ${data.length} campaigns</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Impressions</div>
+        <div class="kpi-value">${fmt(totals.totalImpr)}</div>
+        <div class="kpi-sub">CTR: ${pct(totals.ctr)}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Clicks</div>
+        <div class="kpi-value">${fmt(totals.totalClicks)}</div>
+        <div class="kpi-sub">Avg CPC: ${fmtUSD(totals.avgCpc)}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Conversions</div>
+        <div class="kpi-value green">${totals.totalConv.toFixed(2)}</div>
+        <div class="kpi-sub">Conv. Rate: ${pct(totals.convRate)}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Avg CPC</div>
+        <div class="kpi-value">${fmtUSD(totals.avgCpc)}</div>
+        <div class="kpi-sub">Per click</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Cost / Conv.</div>
+        <div class="kpi-value ${totals.costPerConv < 30 ? 'green' : totals.costPerConv < 60 ? '' : 'orange'}">${fmtUSD(totals.costPerConv)}</div>
+        <div class="kpi-sub">Per conversion</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Spend by Location</div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chart-spend-loc"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Conversions by Location</div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chart-conv-loc"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Spend Distribution — Search vs. Performance Max</div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chart-type-spend"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Conversions Distribution — Search vs. Performance Max</div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chart-type-conv"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Top Campaigns by Conversions</div>
+      <div class="overflow-x">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th class="right">Spend</th>
+              <th class="right">Clicks</th>
+              <th class="right">Conv.</th>
+              <th class="right">Cost/Conv.</th>
+              <th class="right">CTR</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[...data].sort((a,b) => b.conversions - a.conversions).slice(0,8).map(c => `
+              <tr>
+                <td style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</td>
+                <td><span class="badge ${c.type === 'Search' ? 'badge-search' : 'badge-pmax'}">${c.type === 'Performance Max' ? 'PMax' : 'Search'}</span></td>
+                <td><span class="badge ${c.status === 'Enabled' ? 'badge-enabled' : 'badge-paused'}">${c.status}</span></td>
+                <td class="right">${fmtUSD(c.cost)}</td>
+                <td class="right">${fmt(c.clicks)}</td>
+                <td class="right" style="color:#34d399;font-weight:700">${c.conversions.toFixed(2)}</td>
+                <td class="right">${c.conversions > 0 ? fmtUSD(c.costPerConv) : '—'}</td>
+                <td class="right">${pct(c.ctr)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+
+  // Chart: spend by location
+  const locSorted = [...locData].sort((a,b) => b.cost - a.cost);
+  createChart('chart-spend-loc', {
+    type: 'bar',
+    data: {
+      labels: locSorted.map(l => l.location),
+      datasets: [{
+        label: 'Spend ($)',
+        data: locSorted.map(l => round2(l.cost)),
+        backgroundColor: 'rgba(77,166,255,0.55)',
+        borderColor: '#4da6ff',
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => '$'+v } } } }
+  });
+
+  // Chart: conv by location
+  const locConvSorted = [...locData].sort((a,b) => b.conversions - a.conversions);
+  createChart('chart-conv-loc', {
+    type: 'bar',
+    data: {
+      labels: locConvSorted.map(l => l.location),
+      datasets: [{
+        label: 'Conversions',
+        data: locConvSorted.map(l => round2(l.conversions)),
+        backgroundColor: 'rgba(52,211,153,0.55)',
+        borderColor: '#34d399',
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+
+  // Chart: type spend doughnut
+  createChart('chart-type-spend', {
+    type: 'doughnut',
+    data: {
+      labels: ['Search', 'Performance Max'],
+      datasets: [{
+        data: [round2(typeData.search.totalCost), round2(typeData.pmax.totalCost)],
+        backgroundColor: ['rgba(77,166,255,0.8)', 'rgba(167,139,250,0.8)'],
+        borderColor: ['#4da6ff','#a78bfa'],
+        borderWidth: 2,
+        hoverOffset: 4
+      }]
+    },
+    options: { cutout: '65%' }
+  });
+
+  // Chart: type conv doughnut
+  createChart('chart-type-conv', {
+    type: 'doughnut',
+    data: {
+      labels: ['Search', 'Performance Max'],
+      datasets: [{
+        data: [round2(typeData.search.totalConv), round2(typeData.pmax.totalConv)],
+        backgroundColor: ['rgba(52,211,153,0.8)', 'rgba(251,146,60,0.8)'],
+        borderColor: ['#34d399','#fb923c'],
+        borderWidth: 2,
+        hoverOffset: 4
+      }]
+    },
+    options: { cutout: '65%' }
+  });
+}
+
+// ===== RENDER CAMPAIGNS =====
+function renderCampaigns(data) {
+  const el = document.getElementById('tab-campaigns');
+  const sorted = [...data].sort((a,b) => b.conversions - a.conversions);
+
+  function scoreClass(s) {
+    if (s === null) return 'score-na';
+    if (s >= 80) return 'score-high';
+    if (s >= 60) return 'score-mid';
+    return 'score-low';
+  }
+
+  el.innerHTML = `
+  <div class="space-y">
+    <div class="card">
+      <div class="card-title">All Campaigns — ${data.length} total (sorted by conversions)</div>
+      <div class="overflow-x">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Location</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th class="right">Budget/day</th>
+              <th class="right">Impr.</th>
+              <th class="right">CTR</th>
+              <th class="right">Clicks</th>
+              <th class="right">Avg CPC</th>
+              <th class="right">Spend</th>
+              <th class="right">Conv.</th>
+              <th class="right">Conv. Rate</th>
+              <th class="right">Cost/Conv.</th>
+              <th class="right">Opt Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sorted.map(c => `
+              <tr>
+                <td style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.75rem">${c.name}</td>
+                <td style="white-space:nowrap;font-size:0.75rem">${c.location}</td>
+                <td><span class="badge ${c.type === 'Search' ? 'badge-search' : 'badge-pmax'}">${c.type === 'Performance Max' ? 'PMax' : 'Search'}</span></td>
+                <td><span class="badge ${c.status === 'Enabled' ? 'badge-enabled' : 'badge-paused'}">${c.status}</span></td>
+                <td class="right">$${c.budget.toFixed(2)}</td>
+                <td class="right">${fmt(c.impressions)}</td>
+                <td class="right">${pct(c.ctr)}</td>
+                <td class="right">${fmt(c.clicks)}</td>
+                <td class="right">${fmtUSD(c.avgCpc)}</td>
+                <td class="right" style="color:#4da6ff;font-weight:700">${fmtUSD(c.cost)}</td>
+                <td class="right" style="color:#34d399;font-weight:700">${c.conversions.toFixed(2)}</td>
+                <td class="right">${pct(c.convRate)}</td>
+                <td class="right">${c.conversions > 0 ? fmtUSD(c.costPerConv) : '<span style="color:rgba(232,240,254,0.3)">—</span>'}</td>
+                <td class="right"><span class="score-chip ${scoreClass(c.optScore)}">${c.optScore !== null ? c.optScore.toFixed(1)+'%' : 'N/A'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===== RENDER LOCATIONS =====
+function renderLocations(data, locData) {
+  const el = document.getElementById('tab-locations');
+  const maxConv = Math.max(...locData.map(l => l.conversions));
+  const maxSpend = Math.max(...locData.map(l => l.cost));
+
+  el.innerHTML = `
+  <div class="space-y">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Spend by Location</div>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chart-loc-spend-bar"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Conversions vs. Cost per Conversion</div>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chart-loc-cpa"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      ${locData.map(l => {
+        const cpa = l.conversions > 0 ? l.cost / l.conversions : 0;
+        const convBarW = maxConv > 0 ? Math.round((l.conversions / maxConv) * 100) : 0;
+        const spendBarW = maxSpend > 0 ? Math.round((l.cost / maxSpend) * 100) : 0;
+        return `
+        <div class="loc-card">
+          <div class="loc-card-name">${l.location}</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="loc-conv">${l.conversions.toFixed(1)}</div>
+              <div class="loc-cpa">Conversions</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:1rem;font-weight:700;color:#4da6ff">${fmtUSD(l.cost)}</div>
+              <div class="loc-cpa">Total Spend</div>
+            </div>
+          </div>
+          <div class="loc-divider"></div>
+          <div class="loc-row"><span class="ll">CPA</span><span class="lv" style="color:${cpa < 20 ? '#34d399' : cpa < 50 ? '#fbbf24' : '#f87171'}">${cpa > 0 ? fmtUSD(cpa) : '—'}</span></div>
+          <div class="loc-row"><span class="ll">Clicks</span><span class="lv">${fmt(l.clicks)}</span></div>
+          <div class="loc-row"><span class="ll">Impressions</span><span class="lv">${fmt(l.impressions)}</span></div>
+          <div class="loc-row"><span class="ll">Campaigns</span><span class="lv">${l.campaigns}</span></div>
+          <div class="metric-bar-wrap">
+            <div style="font-size:0.6rem;color:rgba(232,240,254,0.35);margin-bottom:3px">Conversions share</div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${convBarW}%"></div></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // Spend bar
+  const locSorted = [...locData].sort((a,b) => b.cost - a.cost);
+  createChart('chart-loc-spend-bar', {
+    type: 'bar',
+    data: {
+      labels: locSorted.map(l => l.location),
+      datasets: [{
+        label: 'Total Spend ($)',
+        data: locSorted.map(l => round2(l.cost)),
+        backgroundColor: locSorted.map((l,i) => `hsla(${210 + i*8},80%,${55+i*2}%,0.65)`),
+        borderColor: locSorted.map((l,i) => `hsla(${210 + i*8},80%,${55+i*2}%,1)`),
+        borderWidth: 1, borderRadius: 4,
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => '$'+v } } } }
+  });
+
+  // CPA scatter
+  createChart('chart-loc-cpa', {
+    type: 'bar',
+    data: {
+      labels: locData.map(l => l.location),
+      datasets: [
+        {
+          label: 'Conversions',
+          data: locData.map(l => round2(l.conversions)),
+          backgroundColor: 'rgba(52,211,153,0.6)',
+          borderColor: '#34d399',
+          borderWidth: 1, borderRadius: 4,
+          yAxisID: 'y',
+        },
+        {
+          label: 'CPA ($)',
+          data: locData.map(l => l.conversions > 0 ? round2(l.cost / l.conversions) : 0),
+          backgroundColor: 'rgba(251,146,60,0.6)',
+          borderColor: '#fb923c',
+          borderWidth: 1, borderRadius: 4,
+          yAxisID: 'y1',
+          type: 'line',
+          tension: 0.3,
+          pointRadius: 4,
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: { type: 'linear', position: 'left', ticks: { color: 'rgba(232,240,254,0.38)', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y1: { type: 'linear', position: 'right', ticks: { color: 'rgba(232,240,254,0.38)', font: { family: 'Inter', size: 10 }, callback: v => '$'+v }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ===== RENDER TYPES =====
+function renderTypes(data, typeData) {
+  const el = document.getElementById('tab-types');
+  const searchCamps = data.filter(c => c.type === 'Search');
+  const pmaxCamps = data.filter(c => c.type === 'Performance Max');
+
+  function metricRow(label, searchVal, pmaxVal, isBetter) {
+    // isBetter: 'high' means higher is better, 'low' means lower is better
+    let sClass = '', pClass = '';
+    if (isBetter === 'high') {
+      if (searchVal > pmaxVal) sClass = 'style="color:#34d399"'; else pClass = 'style="color:#34d399"';
+    } else if (isBetter === 'low' && searchVal > 0 && pmaxVal > 0) {
+      if (searchVal < pmaxVal) sClass = 'style="color:#34d399"'; else pClass = 'style="color:#34d399"';
+    }
+    return `
+      <div class="compare-row">
+        <span class="clabel">${label}</span>
+        <span style="display:flex;gap:3rem">
+          <span class="cval" ${sClass}>${searchVal}</span>
+          <span class="cval" ${pClass}>${pmaxVal}</span>
+        </span>
+      </div>`;
+  }
+
+  el.innerHTML = `
+  <div class="space-y">
+    <div class="grid-2">
+      <div class="card" style="border-color:rgba(77,166,255,0.15)">
+        <div class="card-title" style="color:#4da6ff">Search Campaigns — ${searchCamps.length} campaigns</div>
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="kpi"><div class="kpi-label">Total Spend</div><div class="kpi-value highlight">${fmtUSD(typeData.search.totalCost)}</div></div>
+          <div class="kpi"><div class="kpi-label">Conversions</div><div class="kpi-value green">${typeData.search.totalConv.toFixed(2)}</div></div>
+          <div class="kpi"><div class="kpi-label">Avg CTR</div><div class="kpi-value">${pct(typeData.search.ctr)}</div></div>
+          <div class="kpi"><div class="kpi-label">Cost / Conv.</div><div class="kpi-value">${fmtUSD(typeData.search.costPerConv)}</div></div>
+          <div class="kpi"><div class="kpi-label">Avg CPC</div><div class="kpi-value">${fmtUSD(typeData.search.avgCpc)}</div></div>
+          <div class="kpi"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${pct(typeData.search.convRate)}</div></div>
+        </div>
+        <div class="card-title">Top Search Campaigns</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr><th>Campaign</th><th class="right">Spend</th><th class="right">Conv.</th><th class="right">CPA</th></tr></thead>
+            <tbody>
+              ${[...searchCamps].sort((a,b) => b.conversions-a.conversions).slice(0,6).map(c => `
+                <tr>
+                  <td style="font-size:0.72rem;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
+                  <td class="right">${fmtUSD(c.cost)}</td>
+                  <td class="right" style="color:#34d399;font-weight:700">${c.conversions.toFixed(2)}</td>
+                  <td class="right">${c.conversions > 0 ? fmtUSD(c.costPerConv) : '—'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(167,139,250,0.15)">
+        <div class="card-title" style="color:#a78bfa">Performance Max Campaigns — ${pmaxCamps.length} campaigns</div>
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="kpi"><div class="kpi-label">Total Spend</div><div class="kpi-value" style="color:#a78bfa">${fmtUSD(typeData.pmax.totalCost)}</div></div>
+          <div class="kpi"><div class="kpi-label">Conversions</div><div class="kpi-value green">${typeData.pmax.totalConv.toFixed(2)}</div></div>
+          <div class="kpi"><div class="kpi-label">Avg CTR</div><div class="kpi-value">${pct(typeData.pmax.ctr)}</div></div>
+          <div class="kpi"><div class="kpi-label">Cost / Conv.</div><div class="kpi-value">${fmtUSD(typeData.pmax.costPerConv)}</div></div>
+          <div class="kpi"><div class="kpi-label">Avg CPC</div><div class="kpi-value">${fmtUSD(typeData.pmax.avgCpc)}</div></div>
+          <div class="kpi"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${pct(typeData.pmax.convRate)}</div></div>
+        </div>
+        <div class="card-title">Top PMax Campaigns</div>
+        <div class="overflow-x">
+          <table>
+            <thead><tr><th>Campaign</th><th class="right">Spend</th><th class="right">Conv.</th><th class="right">CPA</th></tr></thead>
+            <tbody>
+              ${[...pmaxCamps].sort((a,b) => b.conversions-a.conversions).slice(0,6).map(c => `
+                <tr>
+                  <td style="font-size:0.72rem;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
+                  <td class="right">${fmtUSD(c.cost)}</td>
+                  <td class="right" style="color:#34d399;font-weight:700">${c.conversions.toFixed(2)}</td>
+                  <td class="right">${c.conversions > 0 ? fmtUSD(c.costPerConv) : '—'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare-panel">
+      <div class="compare-title">Head-to-Head: Search vs. Performance Max</div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;font-size:0.78rem;margin-bottom:0.5rem">
+        <span style="color:#4da6ff;font-weight:700;font-size:0.72rem">SEARCH</span>
+        <span></span>
+        <span style="color:#a78bfa;font-weight:700;font-size:0.72rem;text-align:right">PERFORMANCE MAX</span>
+      </div>
+      ${[
+        ['Total Spend', fmtUSD(typeData.search.totalCost), fmtUSD(typeData.pmax.totalCost), 'low-abs'],
+        ['Impressions', fmt(typeData.search.totalImpr), fmt(typeData.pmax.totalImpr), 'high'],
+        ['Clicks', fmt(typeData.search.totalClicks), fmt(typeData.pmax.totalClicks), 'high'],
+        ['CTR', pct(typeData.search.ctr), pct(typeData.pmax.ctr), 'high'],
+        ['Conversions', typeData.search.totalConv.toFixed(2), typeData.pmax.totalConv.toFixed(2), 'high'],
+        ['Conv. Rate', pct(typeData.search.convRate), pct(typeData.pmax.convRate), 'high'],
+        ['Avg CPC', fmtUSD(typeData.search.avgCpc), fmtUSD(typeData.pmax.avgCpc), 'low'],
+        ['Cost / Conv.', fmtUSD(typeData.search.costPerConv), fmtUSD(typeData.pmax.costPerConv), 'low'],
+      ].map(([label, sv, pv]) => `
+        <div style="display:grid;grid-template-columns:1fr 140px 1fr;gap:0.5rem;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <span style="font-weight:700;color:#e8f0fe">${sv}</span>
+          <span style="text-align:center;color:rgba(232,240,254,0.38);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em">${label}</span>
+          <span style="font-weight:700;color:#e8f0fe;text-align:right">${pv}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Spend vs. Conversions by Campaign Type &amp; Location</div>
+      <div class="chart-container" style="height:300px">
+        <canvas id="chart-type-loc-combo"></canvas>
+      </div>
+    </div>
+  </div>`;
+
+  // Combo chart per location
+  const locs = [...new Set(data.map(c => c.location))];
+  const searchByLoc = locs.map(l => {
+    const camps = data.filter(c => c.location === l && c.type === 'Search');
+    return round2(camps.reduce((s,c) => s+c.cost, 0));
+  });
+  const pmaxByLoc = locs.map(l => {
+    const camps = data.filter(c => c.location === l && c.type === 'Performance Max');
+    return round2(camps.reduce((s,c) => s+c.cost, 0));
+  });
+
+  createChart('chart-type-loc-combo', {
+    type: 'bar',
+    data: {
+      labels: locs,
+      datasets: [
+        { label: 'Search Spend', data: searchByLoc, backgroundColor: 'rgba(77,166,255,0.7)', borderColor: '#4da6ff', borderWidth: 1, borderRadius: 3 },
+        { label: 'PMax Spend', data: pmaxByLoc, backgroundColor: 'rgba(167,139,250,0.7)', borderColor: '#a78bfa', borderWidth: 1, borderRadius: 3 },
+      ]
+    },
+    options: { scales: { x: { stacked: false }, y: { stacked: false, ticks: { callback: v => '$'+v } } } }
+  });
+}
+
+// ===== RENDER ALL =====
+function renderAll() {
+  destroyCharts();
+  renderTabs();
+  const data = getFiltered();
+  const totals = calcTotals(data);
+  const locData = getLocationData(data);
+  const typeData = getTypeData(data);
+
+  // clear all tabs
+  ['overview','campaigns','locations','types'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el && activeTab !== t) el.innerHTML = '';
+  });
+
+  if (activeTab === 'overview')  renderOverview(data, totals, locData, typeData);
+  if (activeTab === 'campaigns') renderCampaigns(data);
+  if (activeTab === 'locations') renderLocations(data, locData);
+  if (activeTab === 'types')     renderTypes(data, typeData);
+}
+
+// ===== INIT =====
+renderAll();
+</script>
+</body>
+</html>
