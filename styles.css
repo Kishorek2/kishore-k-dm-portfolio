@@ -1586,6 +1586,19 @@ h6 {
     background: linear-gradient(135deg, #C8202B, #E42527);
 }
 
+/* Email Marketing Tool Colors */
+.category-icon.email {
+    background: linear-gradient(135deg, #0084FF, #00B8A9);
+}
+
+.tool-icon.apollo {
+    background: linear-gradient(135deg, #635BFF, #4F46E5);
+}
+
+.tool-icon.activecampaign {
+    background: linear-gradient(135deg, #356AE6, #00A1E0);
+}
+
 /* Certifications Section */
 .certifications-section {
     background: linear-gradient(135deg, var(--accent-yellow-light), #FFF9E6);
