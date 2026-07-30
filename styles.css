@@ -1599,6 +1599,19 @@ h6 {
     background: linear-gradient(135deg, #356AE6, #00A1E0);
 }
 
+/* Social Media Marketing Tool Colors */
+.category-icon.social {
+    background: linear-gradient(135deg, #FF0066, #FF4D94);
+}
+
+.tool-icon.hootsuite {
+    background: linear-gradient(135deg, #143059, #1E3A6F);
+}
+
+.tool-icon.buffer {
+    background: linear-gradient(135deg, #2C7BFE, #4DA3FF);
+}
+
 /* Certifications Section */
 .certifications-section {
     background: linear-gradient(135deg, var(--accent-yellow-light), #FFF9E6);
