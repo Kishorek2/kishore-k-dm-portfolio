@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic Design Portfolio | Kishore - AI Digital Marketing Specialist</title>
+    <meta name="description" content="Explore Kishore's graphic design portfolio featuring brochures, certificates, invitations, social media posters, standees, and visiting cards.">
+    <meta name="keywords" content="Graphic Design Portfolio, Brochure Design, Certificate Design, Invitation Design, Social Media Posters, Standee Design, Visiting Card Design, Kishore Digital Marketing">
+    <link rel="canonical" href="https://kishore-k-dm-portfolio.vercel.app/graphic-designing.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Graphic Design Portfolio | Kishore">
+    <meta property="og:description" content="A curated collection of graphic design work including brochures, certificates, invitations, social media posters, standees, and visiting cards.">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ===== Graphic Design Page Styles ===== */
+        body {
+            background-color: var(--bg-primary);
+        }
+
+        /* Back to Home Bar */
+        .gd-back-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(245, 243, 239, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .gd-back-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .gd-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .gd-back-link:hover {
+            color: var(--accent-blue);
+            transform: translateX(-4px);
+        }
+
+        .gd-back-link i {
+            font-size: 0.85rem;
+        }
+
+        .gd-page-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .gd-page-logo .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: var(--text-primary);
+            color: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        /* Hero Section */
+        .gd-hero {
+            padding: 120px 0 60px;
+            text-align: center;
+            background: linear-gradient(180deg, #F5F3EF 0%, #FFF8E7 50%, #F5F3EF 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gd-hero::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            right: -150px;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #FFD93D 0%, #FF9F43 100%);
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: floatShape 20s ease-in-out infinite;
+        }
+
+        .gd-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #4A90D9 0%, #67B8F7 100%);
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            animation: floatShape 25s ease-in-out infinite reverse;
+        }
+
+        .gd-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .gd-hero-label {
+            display: inline-block;
+            background-color: var(--accent-yellow);
+            color: var(--text-primary);
+            padding: 8px 20px;
+            border-radius: var(--radius-xl);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .gd-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .gd-hero h1 .highlight {
+            color: var(--accent-yellow);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .gd-hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .gd-hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .gd-stat {
+            text-align: center;
+        }
+
+        .gd-stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .gd-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Category Filter */
+        .gd-filter-section {
+            padding: 40px 0 0;
+            background-color: var(--bg-primary);
+        }
+
+        .gd-filter-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        .gd-filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .gd-filter-btn {
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+            padding: 10px 24px;
+            border-radius: var(--radius-xl);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .gd-filter-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .gd-filter-btn.active {
+            background-color: var(--text-primary);
+            color: var(--bg-secondary);
+            border-color: var(--text-primary);
+        }
+
+        /* Portfolio Grid */
+        .gd-portfolio {
+            padding: 40px 0 80px;
+        }
+
+        .gd-portfolio-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .gd-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+
+        .gd-card {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gd-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .gd-card-image {
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+
+        .gd-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gd-card:hover .gd-card-image img {
+            transform: scale(1.05);
+        }
+
+        .gd-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
+            opacity: 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .gd-card:hover .gd-card-overlay {
+            opacity: 1;
+        }
+
+        .gd-card-overlay-text {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transform: translateY(10px);
+            transition: var(--transition);
+        }
+
+        .gd-card:hover .gd-card-overlay-text {
+            transform: translateY(0);
+        }
+
+        .gd-card-info {
+            padding: 20px;
+        }
+
+        .gd-card-category {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .gd-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: capitalize;
+            line-height: 1.3;
+        }
+
+        /* Category Section Dividers */
+        .gd-category-section {
+            margin-bottom: 60px;
+        }
+
+        .gd-category-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .gd-category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .gd-category-icon.brochure { background: linear-gradient(135deg, #FF8C00, #FFA94D); }
+        .gd-category-icon.certificate { background: linear-gradient(135deg, #4CAF50, #81C784); }
+        .gd-category-icon.invite { background: linear-gradient(135deg, #9C27B0, #BA68C8); }
+        .gd-category-icon.social { background: linear-gradient(135deg, #FF0066, #FF4D94); }
+        .gd-category-icon.standee { background: linear-gradient(135deg, #4A90D9, #67B8F7); }
+        .gd-category-icon.visiting { background: linear-gradient(135deg, #1A1A1A, #444); }
+
+        .gd-category-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-transform: capitalize;
+        }
+
+        .gd-category-count {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        /* CTA Section */
+        .gd-cta {
+            background-color: var(--text-primary);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .gd-cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .gd-cta h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .gd-cta h2 .highlight {
+            color: var(--accent-yellow);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .gd-cta p {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+
+        .gd-cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .gd-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: var(--radius-xl);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .gd-cta-btn.primary {
+            background-color: var(--accent-yellow);
+            color: var(--text-primary);
+        }
+
+        .gd-cta-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(255, 217, 61, 0.4);
+        }
+
+        .gd-cta-btn.secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .gd-cta-btn.secondary:hover {
+            background-color: white;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .gd-footer {
+            background-color: #111;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .gd-footer p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .gd-footer a {
+            color: var(--accent-yellow);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .gd-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gd-hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gd-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gd-hero h1 {
+                font-size: 2rem;
+            }
+
+            .gd-hero p {
+                font-size: 1rem;
+            }
+
+            .gd-hero-stats {
+                gap: 24px;
+            }
+
+            .gd-stat-number {
+                font-size: 1.5rem;
+            }
+
+            .gd-category-title {
+                font-size: 1.4rem;
+            }
+
+            .gd-cta h2 {
+                font-size: 1.8rem;
+            }
+
+            .gd-card-image {
+                height: 260px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Back Navigation Bar -->
+    <nav class="gd-back-bar">
+        <div class="gd-back-container">
+            <a href="index.html" class="gd-back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+            <div class="gd-page-logo">
+                <span class="logo-icon">K</span>
+                <span>Kishore</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gd-hero">
+        <div class="gd-hero-content">
+            <span class="gd-hero-label">Portfolio</span>
+            <h1>Graphic <span class="highlight">Design</span> Collection</h1>
+            <p>A curated showcase of creative visual work — from brochures and certificates to social media posters, standees, and visiting cards. Each piece crafted with precision and purpose.</p>
+            <div class="gd-hero-stats">
+                <div class="gd-stat">
+                    <span class="gd-stat-number">6</span>
+                    <span class="gd-stat-label">Categories</span>
+                </div>
+                <div class="gd-stat">
+                    <span class="gd-stat-number">500+</span>
+                    <span class="gd-stat-label">Designs</span>
+                </div>
+                <div class="gd-stat">
+                    <span class="gd-stat-number">3+</span>
+                    <span class="gd-stat-label">Years Experience</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Grid -->
+    <section class="gd-portfolio">
+        <div class="gd-portfolio-container">
+
+            <!-- Brochure Category -->
+            <div class="gd-category-section">
+                <div class="gd-category-header">
+                    <div class="gd-category-icon brochure">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h2 class="gd-category-title">Brochure</h2>
+                    <span class="gd-category-count">3 designs</span>
+                </div>
+                <div class="gd-grid">
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Brochure/Business-Loan.png" alt="Business Loan Brochure">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Brochure</span>
+                            <h3 class="gd-card-title">Business Loan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Brochure/Personal-Loan.png" alt="Personal Loan Brochure">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Brochure</span>
+                            <h3 class="gd-card-title">Personal Loan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Brochure/Prince-Highlands(2).png" alt="Prince Highlands Brochure">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Brochure</span>
+                            <h3 class="gd-card-title">Prince Highlands</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Category -->
+            <div class="gd-category-section">
+                <div class="gd-category-header">
+                    <div class="gd-category-icon certificate">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h2 class="gd-category-title">Certificates</h2>
+                    <span class="gd-category-count">2 designs</span>
+                </div>
+                <div class="gd-grid">
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Certificates/Sunitha-T.png" alt="Sunitha T Certificate">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Certificate</span>
+                            <h3 class="gd-card-title">Sunitha T</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Certificates/v2s-certificate-1.png" alt="V2S Certificate">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Certificate</span>
+                            <h3 class="gd-card-title">V2S Certificate</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invite Category -->
+            <div class="gd-category-section">
+                <div class="gd-category-header">
+                    <div class="gd-category-icon invite">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <h2 class="gd-category-title">Invite</h2>
+                    <span class="gd-category-count">2 designs</span>
+                </div>
+                <div class="gd-grid">
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Invite/v2s-annual-meet-Surya Praveen.png" alt="V2S Annual Meet Invite">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Invitation</span>
+                            <h3 class="gd-card-title">V2S Annual Meet — Surya Praveen</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Invite/Womens-day-Malarvizhi M S.png" alt="Women's Day Invite">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Invitation</span>
+                            <h3 class="gd-card-title">Women's Day — Malarvizhi M S</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media Posters Category -->
+            <div class="gd-category-section">
+                <div class="gd-category-header">
+                    <div class="gd-category-icon social">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h2 class="gd-category-title">Social Media Posters</h2>
+                    <span class="gd-category-count">29 designs</span>
+                </div>
+                <div class="gd-grid">
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/AIMT-1.jpeg" alt="AIMT Poster 1">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">AIMT — Poster 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/AIMT-2.jpeg" alt="AIMT Poster 2">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">AIMT — Poster 2</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/AIMT-3.jpeg" alt="AIMT Poster 3">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">AIMT — Poster 3</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/App-promotion.png" alt="App Promotion Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">App Promotion</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Business-loan.png" alt="Business Loan Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Business Loan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Divine-Tourism - Social-Media.png" alt="Divine Tourism Social Media">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Divine Tourism — Social Media</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Divine-Tourism - Social-Media (1).png" alt="Divine Tourism Social Media 1">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Divine Tourism — Social Media 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Divine-Tourism - Social-Media (2).png" alt="Divine Tourism Social Media 2">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Divine Tourism — Social Media 2</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Farieliyas-Testimonials.png" alt="Farieliyas Testimonials">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Farieliyas Testimonials</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Go Global with V2S Finance.png" alt="Go Global V2S Finance">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Go Global with V2S Finance</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Google Ads.png" alt="Google Ads Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Google Ads</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Happy-Diwali.png" alt="Happy Diwali Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Happy Diwali</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Happy-Dussehra.png" alt="Happy Dussehra Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Happy Dussehra</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Happy-Labours-day.png" alt="Happy Labours Day Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Happy Labours Day</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Happy-Republic-Day-2026-venkatesan.png" alt="Happy Republic Day 2026">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Happy Republic Day 2026 — Venkatesan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Loan against property.png" alt="Loan Against Property Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Loan Against Property</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/loan-against-property (1).png" alt="Loan Against Property 1">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Loan Against Property — 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/loan-against-property.png" alt="Loan Against Property">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Loan Against Property — 2</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Manikandan.png" alt="Manikandan Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Manikandan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Monisha.png" alt="Monisha Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Monisha</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/personal-loan.png" alt="Personal Loan Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Personal Loan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Q4-Meet-JFM.png" alt="Q4 Meet JFM Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Q4 Meet — JFM</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Ramya.png" alt="Ramya Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Ramya</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Shirdi.png" alt="Shirdi Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Shirdi</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Tamil-New-Year-2026.png" alt="Tamil New Year 2026 Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Tamil New Year 2026</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Used-car-loan (1).png" alt="Used Car Loan 1 Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Used Car Loan — 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Used-car-loans.png" alt="Used Car Loans Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Used Car Loans</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/varanasi.png" alt="Varanasi Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Varanasi</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/welcome-poster.png" alt="Welcome Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Welcome Poster</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Social-media-posters/Your Website.png" alt="Your Website Poster">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Social Media</span>
+                            <h3 class="gd-card-title">Your Website</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standee Category -->
+            <div class="gd-category-section">
+                <div class="gd-category-header">
+                    <div class="gd-category-icon standee">
+                        <i class="fas fa-rectangle-portrait"></i>
+                    </div>
+                    <h2 class="gd-category-title">Standee</h2>
+                    <span class="gd-category-count">2 designs</span>
+                </div>
+                <div class="gd-grid">
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Standee/Unsecured-Business-Loan-Standee.png" alt="Unsecured Business Loan Standee">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Standee</span>
+                            <h3 class="gd-card-title">Unsecured Business Loan</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/Standee/v2s.png" alt="V2S Standee">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Standee</span>
+                            <h3 class="gd-card-title">V2S</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visiting Card Category -->
+            <div class="gd-category-section">
+                <div class="gd-category-header">
+                    <div class="gd-category-icon visiting">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h2 class="gd-category-title">Visiting Card</h2>
+                    <span class="gd-category-count">6 designs</span>
+                </div>
+                <div class="gd-grid">
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/visiting-card/DJ-ROY (Visiting Card)/1.png" alt="DJ Roy Visiting Card 1">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Visiting Card</span>
+                            <h3 class="gd-card-title">DJ Roy — Card 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/visiting-card/DJ-ROY (Visiting Card)/2.png" alt="DJ Roy Visiting Card 2">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Visiting Card</span>
+                            <h3 class="gd-card-title">DJ Roy — Card 2</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/visiting-card/malar/1.png" alt="Malar Visiting Card 1">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Visiting Card</span>
+                            <h3 class="gd-card-title">Malar — Card 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/visiting-card/malar/2.png" alt="Malar Visiting Card 2">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Visiting Card</span>
+                            <h3 class="gd-card-title">Malar — Card 2</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/visiting-card/Rockz-visiting-card/2.png" alt="Rockz Visiting Card 1">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Visiting Card</span>
+                            <h3 class="gd-card-title">Rockz — Card 1</h3>
+                        </div>
+                    </div>
+                    <div class="gd-card">
+                        <div class="gd-card-image">
+                            <img src="graphic-designing/visiting-card/Rockz-visiting-card/4.png" alt="Rockz Visiting Card 2">
+                            <div class="gd-card-overlay"><span class="gd-card-overlay-text">View Design</span></div>
+                        </div>
+                        <div class="gd-card-info">
+                            <span class="gd-card-category">Visiting Card</span>
+                            <h3 class="gd-card-title">Rockz — Card 2</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="gd-cta">
+        <div class="gd-cta-container">
+            <h2>Need a <span class="highlight">stunning design</span> for your brand?</h2>
+            <p>From social media posters to brochures, certificates, and visiting cards — I create visuals that communicate your message and captivate your audience.</p>
+            <div class="gd-cta-buttons">
+                <a href="index.html#contact" class="gd-cta-btn primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Let's Talk
+                </a>
+                <a href="index.html" class="gd-cta-btn secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gd-footer">
+        <p>&copy; 2026 <a href="index.html">Kishore</a> — AI Digital Marketing Specialist. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
