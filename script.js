@@ -363,4 +363,51 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(loadedStyle);
 
     console.log('Portfolio website loaded successfully!');
+
+    // Certificate Carousel Navigation
+    const certCarousel = document.querySelector('.cert-carousel');
+    if (certCarousel) {
+        const track = certCarousel.querySelector('.cert-carousel-track');
+        const cards = track.querySelectorAll('.certificate-card');
+        const leftBtn = certCarousel.querySelector('.cert-arrow-left');
+        const rightBtn = certCarousel.querySelector('.cert-arrow-right');
+        let certIndex = 0;
+
+        const getVisibleCount = () => {
+            if (window.innerWidth <= 480) return 1;
+            if (window.innerWidth <= 768) return 2;
+            if (window.innerWidth <= 1024) return 3;
+            return 4;
+        };
+
+        const updateCertCarousel = () => {
+            const visible = getVisibleCount();
+            const maxIndex = Math.max(0, cards.length - visible);
+            certIndex = Math.min(certIndex, maxIndex);
+            const gap = 24;
+            const cardWidth = (track.parentElement.clientWidth - gap * (visible - 1)) / visible;
+            track.style.transform = `translateX(-${certIndex * (cardWidth + gap)}px)`;
+            leftBtn.disabled = certIndex === 0;
+            rightBtn.disabled = certIndex >= maxIndex;
+        };
+
+        rightBtn.addEventListener('click', () => {
+            const visible = getVisibleCount();
+            const maxIndex = Math.max(0, cards.length - visible);
+            if (certIndex < maxIndex) {
+                certIndex++;
+                updateCertCarousel();
+            }
+        });
+
+        leftBtn.addEventListener('click', () => {
+            if (certIndex > 0) {
+                certIndex--;
+                updateCertCarousel();
+            }
+        });
+
+        window.addEventListener('resize', updateCertCarousel);
+        updateCertCarousel();
+    }
 });
